@@ -1,23 +1,23 @@
-class BasicResponseModel {
+class BasicResponse {
   final int responseCode;
   final String responseMessage;
+  final Object data;
 
-  BasicResponseModel({
-    this.responseCode,
-    this.responseMessage,
-  });
+  BasicResponse({this.responseCode, this.responseMessage, this.data});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['responseCode'] = this.responseCode;
     data['responseMessage'] = this.responseMessage;
+    data['data'] = this.data;
     return data;
   }
 
-  factory BasicResponseModel.fromJson(Map<String, dynamic> json) {
-    return BasicResponseModel(
+  factory BasicResponse.fromJson(Map<String, dynamic> json) {
+    return BasicResponse(
       responseCode: json['responseCode'],
       responseMessage: json['responseMessage'],
+      data: json['data'],
     );
   }
 }

@@ -1,8 +1,8 @@
-class AdminModel {
+class Admin {
   final String username;
   final String password;
 
-  AdminModel({
+  Admin({
     this.username,
     this.password,
   });
@@ -14,10 +14,13 @@ class AdminModel {
     return data;
   }
 
-  factory AdminModel.fromJson(Map<String, dynamic> json) {
-    return AdminModel(
+  factory Admin.fromJson(Map<String, dynamic> json) {
+    return Admin(
       username: json['username'],
       password: json['password'],
     );
   }
+
+  @override
+  String toString() => 'Admin { username: $username, password: $password }';
 }

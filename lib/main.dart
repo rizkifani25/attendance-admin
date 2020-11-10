@@ -1,33 +1,67 @@
-import 'package:attendance_admin/screen/DashboardScreen/DashboardScreen.dart';
-import 'package:attendance_admin/screen/HomeScreen/HomeScreen.dart';
-import 'package:attendance_admin/screen/LoginScreen/LoginScreen.dart';
-import 'package:attendance_admin/constant/Constant.dart';
-import 'package:attendance_admin/screen/RoomScreen/RoomScreen.dart';
-import 'package:attendance_admin/screen/StudentScreen/StudentScreen.dart';
+import 'package:attendance_admin/data/dataproviders/attendanceAPI.dart';
+import 'package:attendance_admin/data/repositories/attendanceRepository.dart';
+import 'package:attendance_admin/ui/logic/bloc/auth/auth_bloc.dart';
+import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
+import 'package:attendance_admin/ui/logic/bloc/login/login_bloc.dart';
+import 'package:attendance_admin/ui/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(MyApp());
+  final attendanceRepository = AttendanceRepository(
+    attendanceApi: AttendanceApi(
+      httpClient: http.Client(),
+    ),
+  );
+  runApp(
+    RepositoryProvider.value(
+      value: attendanceRepository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(
+            create: (context) => AuthBloc(
+              attendanceRepository: attendanceRepository,
+            )..add(
+                AppLoaded(),
+              ),
+          ),
+          BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+              attendanceRepository: attendanceRepository,
+              authBloc: BlocProvider.of<AuthBloc>(context),
+            ),
+          ),
+          BlocProvider<DashboardBloc>(
+            create: (context) => DashboardBloc(attendanceRepository: attendanceRepository)
+              ..add(
+                GetDashboardData(),
+              ),
+          ),
+        ],
+        child: AdminAttendanceApp(
+          appRouter: AppRouter(),
+        ),
+      ),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class AdminAttendanceApp extends StatelessWidget {
+  final AppRouter appRouter;
+
+  const AdminAttendanceApp({Key key, @required this.appRouter}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      title: 'Attendance App',
+      title: 'Admin Attendance App',
       theme: ThemeData(
-        fontFamily: 'Roboto',
+        fontFamily: 'Raleway',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => HomeScreen(),
-        loginScreen: (BuildContext context) => LoginScreen(),
-        dashboardScreen: (BuildContext context) => DashboardScreen(),
-        roomScreen: (BuildContext context) => RoomScreen(),
-        studentScreen: (BuildContext context) => StudentScreen()
-      },
+      onGenerateRoute: appRouter.onGenerateRoute,
     );
   }
 }
