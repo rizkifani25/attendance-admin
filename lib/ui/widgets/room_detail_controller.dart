@@ -116,7 +116,8 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardBloc, DashboardState>(builder: (context, state) {
+    return BlocBuilder<DashboardBloc, DashboardState>(
+        builder: (context, state) {
       if (state is DashboardLoadData) {
         _listRooms = state.listRoomTime;
         return Container(
@@ -210,121 +211,167 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
       fontWeight: FontWeight.w500,
     );
     final sizedBox = SizedBox(height: 12);
+    final ScrollController scrollController = ScrollController();
+    final minWidthColumn = MediaQuery.of(context).size.width / 5.5;
 
-    return Column(
-      children: fixedList
-          .map(
-            (e) => Container(
-              constraints: BoxConstraints(
-                minWidth: 1000,
-                minHeight: 100,
-                maxHeight: 150,
-              ),
-              child: Card(
-                color: secondaryColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Time',
-                          style: tableHeadStyle,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 1.4,
+      child: Scrollbar(
+        isAlwaysShown: true,
+        controller: scrollController,
+        child: ListView.builder(
+          physics: BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          scrollDirection: Axis.vertical,
+          controller: scrollController,
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Column(
+                children: fixedList
+                    .map(
+                      (e) => Container(
+                        constraints: BoxConstraints(
+                          minWidth: 1000,
+                          minHeight: 100,
+                          maxHeight: 150,
                         ),
-                        Text(
-                          time[e],
-                        ),
-                        sizedBox,
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Subject',
-                          style: tableHeadStyle,
-                        ),
-                        Text(
-                          data.isEmpty
-                              ? 'SUBJECT KOSONG'
-                              : data[e].subject.toString() == ''
-                                  ? 'SUBJECT KOSONG'
-                                  : data[e].subject,
-                        ),
-                        sizedBox,
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Students',
-                          style: tableHeadStyle,
-                        ),
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              _handleEnrolledDetailButton(
-                                context,
-                                data.isEmpty
-                                    ? []
-                                    : data[e].enrolled.toString() == '[]'
-                                        ? []
-                                        : data[e].enrolled,
-                              );
-                            },
-                            child: Container(
-                              child: data.isEmpty
-                                  ? Text('ENROLLED KOSONG')
-                                  : data[e].enrolled.toString() == '[]'
-                                      ? Text('ENROLLED KOSONG')
-                                      : _studentEnrolled(data[e].enrolled),
-                            ),
+                        child: Card(
+                          color: secondaryColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                constraints:
+                                    BoxConstraints(minWidth: minWidthColumn),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      'Time',
+                                      style: tableHeadStyle,
+                                    ),
+                                    Text(
+                                      time[e],
+                                    ),
+                                    sizedBox,
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                constraints:
+                                    BoxConstraints(minWidth: minWidthColumn),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      'Subject',
+                                      style: tableHeadStyle,
+                                    ),
+                                    Text(
+                                      data.isEmpty
+                                          ? 'SUBJECT KOSONG'
+                                          : data[e].subject.toString() == ''
+                                              ? 'SUBJECT KOSONG'
+                                              : data[e].subject,
+                                    ),
+                                    sizedBox,
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                constraints:
+                                    BoxConstraints(minWidth: minWidthColumn),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      'Students',
+                                      style: tableHeadStyle,
+                                    ),
+                                    MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _handleEnrolledDetailButton(
+                                            context,
+                                            data.isEmpty
+                                                ? []
+                                                : data[e].enrolled.toString() ==
+                                                        '[]'
+                                                    ? []
+                                                    : data[e].enrolled,
+                                          );
+                                        },
+                                        child: Container(
+                                          child: data.isEmpty
+                                              ? Text('ENROLLED KOSONG')
+                                              : data[e].enrolled.toString() ==
+                                                      '[]'
+                                                  ? Text('ENROLLED KOSONG')
+                                                  : _studentEnrolled(
+                                                      data[e].enrolled),
+                                        ),
+                                      ),
+                                    ),
+                                    sizedBox,
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                constraints:
+                                    BoxConstraints(minWidth: minWidthColumn),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      'Lecturer',
+                                      style: tableHeadStyle,
+                                    ),
+                                    Text(
+                                      data.isEmpty
+                                          ? 'LECTURER KOSONG'
+                                          : data[e].lecturer.toString() == ''
+                                              ? 'LECTURER KOSONG'
+                                              : data[e].lecturer,
+                                    ),
+                                    sizedBox,
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                constraints:
+                                    BoxConstraints(minWidth: minWidthColumn),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      'Status',
+                                      style: tableHeadStyle,
+                                    ),
+                                    data.isEmpty
+                                        ? _statusAvailableBadge()
+                                        : data[e].status.toString() == 'true'
+                                            ? _statusBookedBadge()
+                                            : _statusAvailableBadge(),
+                                    sizedBox,
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        sizedBox,
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Lecturer',
-                          style: tableHeadStyle,
-                        ),
-                        Text(
-                          data.isEmpty
-                              ? 'LECTURER KOSONG'
-                              : data[e].lecturer.toString() == ''
-                                  ? 'LECTURER KOSONG'
-                                  : data[e].lecturer,
-                        ),
-                        sizedBox,
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Status',
-                          style: tableHeadStyle,
-                        ),
-                        data.isEmpty
-                            ? _statusAvailableBadge()
-                            : data[e].status.toString() == 'true'
-                                ? _statusBookedBadge()
-                                : _statusAvailableBadge(),
-                        sizedBox,
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
-          .toList(),
+                      ),
+                    )
+                    .toList());
+          },
+        ),
+      ),
     );
   }
 
@@ -368,7 +415,8 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                 (e) => e < 4
                     ? _profilePictureStudent(
                         margin: (e * 20).toString(),
-                        remainder: e == 3 ? (fixedList.length - 3).toString() : '',
+                        remainder:
+                            e == 3 ? (fixedList.length - 3).toString() : '',
                       )
                     : Container(),
               )
