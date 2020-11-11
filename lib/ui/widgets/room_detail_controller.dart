@@ -85,7 +85,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     ).whenComplete(() => _handleSendDateAndRoomName());
   }
 
-  _handleEnrolledDetailButton(BuildContext context, List<dynamic> students) {
+  _handleEnrolledDetailButton(BuildContext context, List<Enrolled> students) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
@@ -107,7 +107,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
             ),
           ),
           child: Container(
-            child: Text(students.toString() == '[]' ? '' : students.toString()),
+            child: Text(students.toString()),
           ),
         );
       },
@@ -356,9 +356,8 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     );
   }
 
-  Widget _studentEnrolled(data) {
-    var studentId = List<String>.from(data);
-    final List fixedList = Iterable<int>.generate(studentId.length).toList();
+  Widget _studentEnrolled(List<Enrolled> data) {
+    final List fixedList = Iterable<int>.generate(data.length).toList();
 
     return Stack(
       fit: StackFit.passthrough,

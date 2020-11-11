@@ -50,7 +50,6 @@ class AttendanceApi {
       }
 
       var responseBody = jsonDecode(response.body);
-
       if (responseBody['data'].toString() == '[]') {
         return [];
       } else {

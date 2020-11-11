@@ -1,6 +1,8 @@
+import 'models.dart';
+
 class Time {
   final bool status;
-  final List enrolled;
+  final List<Enrolled> enrolled;
   final String lecturer;
   final String subject;
 
@@ -30,11 +32,23 @@ class Time {
   }
 
   factory Time.fromJson(Map<String, dynamic> json) {
-    return Time(
-      status: json['status'],
-      enrolled: json['enrolled'],
-      lecturer: json['lecturer'],
-      subject: json['subject'],
-    );
+    if (json['enrolled'] != null) {
+      var tagObjsJson = json['enrolled'] as List;
+      List<Enrolled> _enrolled = tagObjsJson.map((e) => Enrolled.fromJson(e)).toList();
+
+      return Time(
+        status: json['status'],
+        enrolled: _enrolled,
+        lecturer: json['lecturer'],
+        subject: json['subject'],
+      );
+    } else {
+      return Time(
+        status: json['status'],
+        enrolled: json['enrolled'],
+        lecturer: json['lecturer'],
+        subject: json['subject'],
+      );
+    }
   }
 }

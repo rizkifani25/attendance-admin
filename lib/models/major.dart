@@ -2,26 +2,25 @@ class Major {
   final int id;
   final String major;
   final String abbreviation;
+  final String majorCode;
 
   Major({
     this.id,
     this.major,
     this.abbreviation,
+    this.majorCode,
   });
 
   static List<Major> getMajor() {
     return <Major>[
-      // School of Business
-      Major(id: 1, major: 'Accounting', abbreviation: 'ACC'),
-      Major(id: 2, major: 'Management', abbreviation: 'MGT'),
       // School of Computer Science
-      Major(id: 3, major: 'Information Technology', abbreviation: 'IT'),
-      Major(id: 4, major: 'Information System', abbreviation: 'IS'),
+      Major(id: 1, major: 'Information Technology', abbreviation: 'IT', majorCode: "001"),
+      Major(id: 2, major: 'Information System', abbreviation: 'IS', majorCode: "002"),
       // School of Engineering
-      Major(id: 5, major: 'Industrial Engineering', abbreviation: 'IE'),
-      Major(id: 6, major: 'Electrical Engineering', abbreviation: 'EE'),
-      Major(id: 7, major: 'Environmental Engineering', abbreviation: 'ENV'),
-      Major(id: 8, major: 'Civil Engineering', abbreviation: 'CE'),
+      Major(id: 3, major: 'Industrial Engineering', abbreviation: 'IE', majorCode: "003"),
+      Major(id: 4, major: 'Electrical Engineering', abbreviation: 'EE', majorCode: "004"),
+      Major(id: 5, major: 'Environmental Engineering', abbreviation: 'ENV', majorCode: "005"),
+      Major(id: 6, major: 'Civil Engineering', abbreviation: 'CE', majorCode: "006"),
     ];
   }
 }
