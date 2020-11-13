@@ -3,6 +3,7 @@ import 'package:attendance_admin/ui/logic/bloc/auth/auth_bloc.dart';
 import 'package:attendance_admin/ui/logic/bloc/login/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatelessWidget {
   @override
@@ -13,7 +14,16 @@ class LoginView extends StatelessWidget {
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthFailure) {
-              _showError(state.message, context);
+              Fluttertoast.showToast(
+                webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
+                msg: 'Authentication fail',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: redColor,
+                textColor: Colors.white,
+                fontSize: 16.0,
+              );
             }
           },
           child: BlocBuilder<AuthBloc, AuthState>(
@@ -82,7 +92,16 @@ class __SignInFormState extends State<_SignInForm> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginFailure) {
-          _showError(state.error, context);
+          Fluttertoast.showToast(
+            webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
+            msg: state.error,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: redColor,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
@@ -134,7 +153,7 @@ class __SignInFormState extends State<_SignInForm> {
                         filled: true,
                         isDense: true,
                         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                        hintText: 'Password',
+                        hintText: 'Username',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(32.0),
                         ),
@@ -157,7 +176,7 @@ class __SignInFormState extends State<_SignInForm> {
                         filled: true,
                         isDense: true,
                         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                        hintText: 'Username',
+                        hintText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(32.0),
                         ),
@@ -192,13 +211,4 @@ class __SignInFormState extends State<_SignInForm> {
       }),
     );
   }
-}
-
-void _showError(String error, BuildContext context) {
-  Scaffold.of(context).showSnackBar(
-    SnackBar(
-      content: Text(error),
-      backgroundColor: redColor,
-    ),
-  );
 }

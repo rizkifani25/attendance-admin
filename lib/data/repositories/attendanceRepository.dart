@@ -16,6 +16,10 @@ class AttendanceRepository {
     return attendanceApi.getTimeList();
   }
 
+  Future<List<Major>> getListOfMajor() {
+    return attendanceApi.getMajorList();
+  }
+
   Future<List<Time>> getRoomDetail(String roomName, String date) async {
     List<Time> roomDetail = await attendanceApi.getRoomDetail(roomName, date);
     return roomDetail;
@@ -34,6 +38,23 @@ class AttendanceRepository {
 
   Future<Admin> logOutAdmin() async {
     return null;
+  }
+
+  Future<BasicResponse> registerNewStudent(
+    String studentId,
+    String studentName,
+    String password,
+    String batch,
+    String major,
+  ) async {
+    BasicResponse basicResponse = await attendanceApi.addNewStudent(
+      studentId,
+      studentName,
+      password,
+      batch,
+      major,
+    );
+    return basicResponse;
   }
   // Admin
 }

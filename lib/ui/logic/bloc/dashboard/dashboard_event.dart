@@ -10,6 +10,7 @@ abstract class DashboardEvent extends Equatable {
 class GetDashboardData extends DashboardEvent {
   final List<Room> listRoomTime;
   final List<String> listTime;
+
   final String roomName;
   final String date;
 

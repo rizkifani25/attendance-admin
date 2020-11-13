@@ -18,6 +18,10 @@ class AttendanceApi {
     return Time.getRoomTime();
   }
 
+  Future<List<Major>> getMajorList() async {
+    return Major.getMajor();
+  }
+
   Future<Admin> loginAdmin(String username, String password) async {
     try {
       final String loginAdminUrl =
@@ -60,6 +64,49 @@ class AttendanceApi {
           Time.fromJson(responseBody['data'][0]['time4']),
         ];
         return listTemp;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception('Failure');
+    }
+  }
+
+  Future<BasicResponse> addNewStudent(
+    String studentId,
+    String studentName,
+    String password,
+    String batch,
+    String major,
+  ) async {
+    try {
+      final String registerStudentUrl = apiURL +
+          'student/register?student_id=' +
+          studentId +
+          '&student_name=' +
+          studentName +
+          '&password=' +
+          password +
+          '&batch=' +
+          batch +
+          '&major=' +
+          major;
+      final http.Response response = await httpClient.post(registerStudentUrl);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failure');
+      }
+
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['responseCode'] != 200) {
+        BasicResponse basicResponse = new BasicResponse(
+          responseCode: 400,
+          responseMessage: responseBody['responseMessage'],
+        );
+        return basicResponse;
+      } else {
+        var responseBody = jsonDecode(response.body);
+        BasicResponse basicResponse = BasicResponse.fromJson(responseBody);
+        return basicResponse;
       }
     } catch (e) {
       print(e.toString());

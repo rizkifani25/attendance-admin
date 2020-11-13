@@ -2,9 +2,12 @@ import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
 import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
 import 'package:attendance_admin/ui/widgets/calendar.dart';
+import 'package:attendance_admin/ui/widgets/room_register_controller.dart';
+import 'package:attendance_admin/ui/widgets/student_add_new_panel.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -85,7 +88,14 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     ).whenComplete(() => _handleSendDateAndRoomName());
   }
 
-  _handleEnrolledDetailButton(BuildContext context, List<Enrolled> students) {
+  _handleEnrolledDetailButton(
+    BuildContext context,
+    String time,
+    String subject,
+    List<Enrolled> enrolled,
+    String lecturer,
+    bool status,
+  ) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
@@ -107,8 +117,40 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
             ),
           ),
           child: Container(
-            child: Text(students.toString()),
+            child: RoomRegister(
+              time: time,
+              subject: subject,
+              enrolled: enrolled,
+              lecturer: lecturer,
+              status: status,
+            ),
           ),
+        );
+      },
+    ).whenComplete(() => _handleSendDateAndRoomName());
+  }
+
+  _handleShowPanelAddNewStudentButton(BuildContext context) {
+    showModalBottomSheet<void>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      enableDrag: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height / 1.2,
+          decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: StudentAddNew(),
         );
       },
     ).whenComplete(() => _handleSendDateAndRoomName());
@@ -116,91 +158,121 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardBloc, DashboardState>(
+    return Scaffold(
+      body: BlocBuilder<DashboardBloc, DashboardState>(
         builder: (context, state) {
-      if (state is DashboardLoadData) {
-        _listRooms = state.listRoomTime;
-        return Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
+          if (state is DashboardLoadData) {
+            _listRooms = state.listRoomTime;
+            return Container(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Select Room : ',
-                      style: TextStyle(
-                        color: greyColor,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                  DropdownButton(
-                    hint: Text('Select Room'),
-                    value: _selectedRoom,
-                    items: state.listRoomTime.map((e) {
-                      return DropdownMenuItem(
-                        child: Text(e.room),
-                        value: e.id,
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRoom = value;
-                      });
-                      _handleSendDateAndRoomName();
-                    },
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Select Date : ',
-                      style: TextStyle(
-                        color: greyColor,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                  FlatButton(
-                    child: Padding(
-                      padding: EdgeInsets.all(7),
-                      child: Text(
-                        _dateNow,
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 24,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          'Select Room : ',
+                          style: TextStyle(
+                            color: greyColor,
+                            fontSize: 24,
+                          ),
                         ),
                       ),
-                    ),
-                    focusColor: hoverColor,
-                    color: transparentColor,
-                    onPressed: () => _handleCalendarButton(context),
+                      DropdownButton(
+                        hint: Text('Select Room'),
+                        value: _selectedRoom,
+                        items: state.listRoomTime.map((e) {
+                          return DropdownMenuItem(
+                            child: Text(e.room),
+                            value: e.id,
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedRoom = value;
+                          });
+                          _handleSendDateAndRoomName();
+                        },
+                      ),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          'Select Date : ',
+                          style: TextStyle(
+                            color: greyColor,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                      FlatButton(
+                        child: Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Text(
+                            _dateNow,
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ),
+                        focusColor: hoverColor,
+                        color: transparentColor,
+                        onPressed: () => _handleCalendarButton(context),
+                      ),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      FlatButton(
+                        child: Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Text(
+                            'Add New Student',
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ),
+                        focusColor: hoverColor,
+                        color: transparentColor,
+                        onPressed: () => _handleShowPanelAddNewStudentButton(context),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    child: _tableRoomDetail(state.listDetailRoom, state.listTime),
                   ),
                 ],
               ),
-              Container(
-                child: _tableRoomDetail(state.listDetailRoom, state.listTime),
+            );
+          }
+          if (state is DashboardLoadDataFailure) {
+            Fluttertoast.showToast(
+              webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: redColor,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          }
+          return Center(
+            child: Container(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
               ),
-            ],
-          ),
-        );
-      }
-      if (state is DashboardLoadDataFailure) {
-        _showError(state.message, context);
-      }
-      return Center(
-        child: Container(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-          ),
-        ),
-      );
-    });
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _tableRoomDetail(List<Time> data, List<String> time) {
@@ -242,11 +314,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                constraints:
-                                    BoxConstraints(minWidth: minWidthColumn),
+                                constraints: BoxConstraints(minWidth: minWidthColumn),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Text(
                                       'Time',
@@ -260,11 +330,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                 ),
                               ),
                               Container(
-                                constraints:
-                                    BoxConstraints(minWidth: minWidthColumn),
+                                constraints: BoxConstraints(minWidth: minWidthColumn),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Text(
                                       'Subject',
@@ -282,11 +350,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                 ),
                               ),
                               Container(
-                                constraints:
-                                    BoxConstraints(minWidth: minWidthColumn),
+                                constraints: BoxConstraints(minWidth: minWidthColumn),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Text(
                                       'Students',
@@ -298,22 +364,35 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                         onTap: () {
                                           _handleEnrolledDetailButton(
                                             context,
+                                            time[e],
+                                            data.isEmpty
+                                                ? ''
+                                                : data[e].subject.toString() == '[]'
+                                                    ? []
+                                                    : data[e].subject,
                                             data.isEmpty
                                                 ? []
-                                                : data[e].enrolled.toString() ==
-                                                        '[]'
+                                                : data[e].enrolled.toString() == '[]'
                                                     ? []
                                                     : data[e].enrolled,
+                                            data.isEmpty
+                                                ? ''
+                                                : data[e].lecturer.toString() == '[]'
+                                                    ? []
+                                                    : data[e].lecturer,
+                                            data.isEmpty
+                                                ? false
+                                                : data[e].status.toString() == '[]'
+                                                    ? []
+                                                    : data[e].status,
                                           );
                                         },
                                         child: Container(
                                           child: data.isEmpty
                                               ? Text('ENROLLED KOSONG')
-                                              : data[e].enrolled.toString() ==
-                                                      '[]'
+                                              : data[e].enrolled.toString() == '[]'
                                                   ? Text('ENROLLED KOSONG')
-                                                  : _studentEnrolled(
-                                                      data[e].enrolled),
+                                                  : _studentEnrolled(data[e].enrolled),
                                         ),
                                       ),
                                     ),
@@ -322,11 +401,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                 ),
                               ),
                               Container(
-                                constraints:
-                                    BoxConstraints(minWidth: minWidthColumn),
+                                constraints: BoxConstraints(minWidth: minWidthColumn),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Text(
                                       'Lecturer',
@@ -344,11 +421,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                 ),
                               ),
                               Container(
-                                constraints:
-                                    BoxConstraints(minWidth: minWidthColumn),
+                                constraints: BoxConstraints(minWidth: minWidthColumn),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Text(
                                       'Status',
@@ -414,8 +489,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                 (e) => e < 4
                     ? _profilePictureStudent(
                         margin: (e * 20).toString(),
-                        remainder:
-                            e == 3 ? (fixedList.length - 3).toString() : '',
+                        remainder: e == 3 ? (fixedList.length - 3).toString() : '',
                       )
                     : Container(),
               )
@@ -477,13 +551,4 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
           : Container(),
     );
   }
-}
-
-void _showError(String error, BuildContext context) {
-  Scaffold.of(context).showSnackBar(
-    SnackBar(
-      content: Text(error),
-      backgroundColor: redColor,
-    ),
-  );
 }

@@ -3,6 +3,7 @@ import 'package:attendance_admin/data/repositories/attendanceRepository.dart';
 import 'package:attendance_admin/ui/logic/bloc/auth/auth_bloc.dart';
 import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
 import 'package:attendance_admin/ui/logic/bloc/login/login_bloc.dart';
+import 'package:attendance_admin/ui/logic/bloc/student/student_bloc.dart';
 import 'package:attendance_admin/ui/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +39,12 @@ void main() {
                 GetDashboardData(),
               ),
           ),
+          BlocProvider<StudentBloc>(
+            create: (context) => StudentBloc(attendanceRepository: attendanceRepository)
+              ..add(
+                GetStudentAddNewPageData(),
+              ),
+          )
         ],
         child: AdminAttendanceApp(
           appRouter: AppRouter(),
