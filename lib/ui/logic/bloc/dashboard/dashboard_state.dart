@@ -15,13 +15,22 @@ class DashboardLoading extends DashboardState {}
 
 class DashboardLoadData extends DashboardState {
   final List<Room> listRoomTime;
-  final List<Time> listDetailRoom;
+  final RoomDetailResponse detailRoom;
   final List<String> listTime;
 
-  DashboardLoadData({this.listRoomTime, this.listDetailRoom, this.listTime});
+  DashboardLoadData({this.listRoomTime, this.detailRoom, this.listTime});
 
   @override
-  List<Object> get props => [listRoomTime, listDetailRoom, listTime];
+  List<Object> get props => [listRoomTime, detailRoom, listTime];
+}
+
+class DashboardLoadDataSuccess extends DashboardState {
+  final String message;
+
+  DashboardLoadDataSuccess({this.message});
+
+  @override
+  List<Object> get props => [message];
 }
 
 class DashboardLoadDataFailure extends DashboardState {

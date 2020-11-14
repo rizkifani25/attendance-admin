@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:attendance_admin/data/repositories/attendanceRepository.dart';
 import 'package:attendance_admin/models/models.dart';
+import 'package:attendance_admin/models/room_detail_response.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -20,6 +21,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     if (event is GetDashboardData) {
       yield* _mapGetDashboardDataToState(event);
     }
+    if (event is UpdateRoomData) {
+      yield* _mapUpdateRoomData(event);
+    }
   }
 
   Stream<DashboardState> _mapGetDashboardDataToState(GetDashboardData event) async* {
@@ -34,13 +38,35 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         yield DashboardLoadData(
           listRoomTime: listOfRoom,
           listTime: listOfTime,
-          listDetailRoom: roomDetail,
+          detailRoom: roomDetail,
         );
       } else {
         yield DashboardLoadDataFailure(message: 'Something very weird just happened');
       }
     } catch (e) {
       yield DashboardLoadDataFailure(message: 'An unknown error occurred when load dashboard');
+    }
+  }
+
+  Stream<DashboardState> _mapUpdateRoomData(UpdateRoomData event) async* {
+    yield DashboardLoading();
+
+    try {
+      final roomUpdate = await attendanceRepository.updateRoomData(
+        event.time,
+        event.roomName,
+        event.date,
+        event.updatedTime,
+      );
+
+      print(roomUpdate.responseCode);
+      if (roomUpdate.responseCode == 200) {
+        yield DashboardLoadDataSuccess(message: 'Data updated');
+      } else {
+        yield DashboardLoadDataFailure(message: 'Something very weird just happened');
+      }
+    } catch (e) {
+      yield DashboardLoadDataFailure(message: 'An unknown error occurred when update data');
     }
   }
 }

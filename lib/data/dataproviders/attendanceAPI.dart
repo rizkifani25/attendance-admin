@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
-import 'package:flutter/material.dart';
+import 'package:attendance_admin/models/register_room_request.dart';
+import 'package:attendance_admin/models/room_detail_response.dart';
 import 'package:http/http.dart' as http;
 
 class AttendanceApi {
-  final http.Client httpClient;
-
-  AttendanceApi({@required this.httpClient});
+  AttendanceApi();
 
   Future<List<Room>> getRoomList() async {
     return Room.getRoom();
@@ -26,7 +25,7 @@ class AttendanceApi {
     try {
       final String loginAdminUrl =
           apiURL + 'admin/login?username=' + username + '&password=' + password;
-      final http.Response response = await httpClient.post(loginAdminUrl);
+      final http.Response response = await http.post(loginAdminUrl);
 
       if (response.statusCode != 200) {
         throw Exception('Failure');
@@ -44,27 +43,18 @@ class AttendanceApi {
     }
   }
 
-  Future<List<Time>> getRoomDetail(String roomName, String date) async {
+  Future<RoomDetailResponse> getRoomDetail(String roomName, String date) async {
     try {
-      final String listRoomDetailUrl = apiURL + 'room/list?room_name=' + roomName + '&date=' + date;
-      final http.Response response = await httpClient.post(listRoomDetailUrl);
+      final String listRoomDetailUrl =
+          apiURL + 'room/detail?room_name=' + roomName + '&date=' + date;
+      final http.Response response = await http.post(listRoomDetailUrl);
 
       if (response.statusCode != 200) {
         throw Exception('Failure');
       }
 
       var responseBody = jsonDecode(response.body);
-      if (responseBody['data'].toString() == '[]') {
-        return [];
-      } else {
-        List<Time> listTemp = [
-          Time.fromJson(responseBody['data'][0]['time1']),
-          Time.fromJson(responseBody['data'][0]['time2']),
-          Time.fromJson(responseBody['data'][0]['time3']),
-          Time.fromJson(responseBody['data'][0]['time4']),
-        ];
-        return listTemp;
-      }
+      return RoomDetailResponse.fromJson(responseBody['data']);
     } catch (e) {
       print(e.toString());
       throw Exception('Failure');
@@ -90,7 +80,7 @@ class AttendanceApi {
           batch +
           '&major=' +
           major;
-      final http.Response response = await httpClient.post(registerStudentUrl);
+      var response = await http.post(registerStudentUrl);
 
       if (response.statusCode != 200) {
         throw Exception('Failure');
@@ -110,6 +100,54 @@ class AttendanceApi {
       }
     } catch (e) {
       print(e.toString());
+      throw Exception('Failure');
+    }
+  }
+
+  Future<BasicResponse> updateRoomDetail(
+    String time,
+    String roomName,
+    String date,
+    Time updatedTime,
+  ) async {
+    try {
+      RegisterRoomRequest registerRoomRequest = new RegisterRoomRequest();
+
+      registerRoomRequest.roomName = roomName;
+      registerRoomRequest.updatedTime = updatedTime;
+      registerRoomRequest.date = date;
+      registerRoomRequest.time = time;
+
+      print(jsonEncode(registerRoomRequest.toJson()));
+
+      Map<String, String> requestHeaders = {'Content-type': 'application/json'};
+
+      var response = await http.post(
+        apiURL + 'room/register',
+        body: jsonEncode(registerRoomRequest.toJson()),
+        headers: requestHeaders,
+      );
+
+      print(response);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failure');
+      }
+
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['responseCode'] != 200) {
+        BasicResponse basicResponse = new BasicResponse(
+          responseCode: 400,
+          responseMessage: responseBody['responseMessage'],
+        );
+        return basicResponse;
+      } else {
+        var responseBody = jsonDecode(response.body);
+        BasicResponse basicResponse = BasicResponse.fromJson(responseBody);
+        return basicResponse;
+      }
+    } catch (e) {
+      print(e);
       throw Exception('Failure');
     }
   }

@@ -1,10 +1,10 @@
 import 'models.dart';
 
 class Time {
-  final bool status;
-  final List<Enrolled> enrolled;
-  final String lecturer;
-  final String subject;
+  bool status;
+  List<Enrolled> enrolled;
+  String lecturer;
+  String subject;
 
   Time({
     this.status,

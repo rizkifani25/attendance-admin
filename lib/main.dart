@@ -7,14 +7,12 @@ import 'package:attendance_admin/ui/logic/bloc/student/student_bloc.dart';
 import 'package:attendance_admin/ui/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   final attendanceRepository = AttendanceRepository(
-    attendanceApi: AttendanceApi(
-      httpClient: http.Client(),
-    ),
+    attendanceApi: AttendanceApi(),
   );
+
   runApp(
     RepositoryProvider.value(
       value: attendanceRepository,

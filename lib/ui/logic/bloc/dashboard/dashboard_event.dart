@@ -19,3 +19,15 @@ class GetDashboardData extends DashboardEvent {
   @override
   List<Object> get props => [listRoomTime, listTime, roomName, date];
 }
+
+class UpdateRoomData extends DashboardEvent {
+  final String time;
+  final String roomName;
+  final String date;
+  final Time updatedTime;
+
+  UpdateRoomData({this.time, this.roomName, this.date, this.updatedTime});
+
+  @override
+  List<Object> get props => [time, roomName, date, updatedTime];
+}

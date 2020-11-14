@@ -1,5 +1,6 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
+import 'package:attendance_admin/models/room_detail_response.dart';
 import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
 import 'package:attendance_admin/ui/widgets/calendar.dart';
 import 'package:attendance_admin/ui/widgets/room_register_controller.dart';
@@ -123,6 +124,8 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
               enrolled: enrolled,
               lecturer: lecturer,
               status: status,
+              roomName: _listRooms[_selectedRoom - 1].room,
+              date: _dateNow,
             ),
           ),
         );
@@ -245,7 +248,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                     ],
                   ),
                   Container(
-                    child: _tableRoomDetail(state.listDetailRoom, state.listTime),
+                    child: _tableRoomDetail(state.detailRoom, state.listTime),
                   ),
                 ],
               ),
@@ -263,6 +266,18 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
               fontSize: 16.0,
             );
           }
+          if (state is DashboardLoadDataSuccess) {
+            Fluttertoast.showToast(
+              webBgColor: "linear-gradient(to right, #2e7d32, #388e3c)",
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: greenColor,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          }
           return Center(
             child: Container(
               child: CircularProgressIndicator(
@@ -275,7 +290,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     );
   }
 
-  Widget _tableRoomDetail(List<Time> data, List<String> time) {
+  Widget _tableRoomDetail(RoomDetailResponse data, List<String> time) {
     final List fixedList = Iterable<int>.generate(time.length).toList();
     final tableHeadStyle = TextStyle(
       color: greyColor2,
@@ -285,6 +300,12 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     final sizedBox = SizedBox(height: 12);
     final ScrollController scrollController = ScrollController();
     final minWidthColumn = MediaQuery.of(context).size.width / 5.5;
+    List<Time> listTime = [
+      data.listTime.time1,
+      data.listTime.time2,
+      data.listTime.time3,
+      data.listTime.time4
+    ];
 
     return SizedBox(
       height: MediaQuery.of(context).size.height / 1.4,
@@ -339,11 +360,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      data.isEmpty
-                                          ? 'SUBJECT KOSONG'
-                                          : data[e].subject.toString() == ''
-                                              ? 'SUBJECT KOSONG'
-                                              : data[e].subject,
+                                      listTime[e].subject != ''
+                                          ? listTime[e].subject
+                                          : 'SUBJECT KOSONG',
                                     ),
                                     sizedBox,
                                   ],
@@ -365,34 +384,18 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                           _handleEnrolledDetailButton(
                                             context,
                                             time[e],
-                                            data.isEmpty
-                                                ? ''
-                                                : data[e].subject.toString() == '[]'
-                                                    ? []
-                                                    : data[e].subject,
-                                            data.isEmpty
+                                            listTime[e].subject != '' ? listTime[e].subject : '',
+                                            listTime[e].enrolled.isEmpty
                                                 ? []
-                                                : data[e].enrolled.toString() == '[]'
-                                                    ? []
-                                                    : data[e].enrolled,
-                                            data.isEmpty
-                                                ? ''
-                                                : data[e].lecturer.toString() == '[]'
-                                                    ? []
-                                                    : data[e].lecturer,
-                                            data.isEmpty
-                                                ? false
-                                                : data[e].status.toString() == '[]'
-                                                    ? []
-                                                    : data[e].status,
+                                                : listTime[e].enrolled,
+                                            listTime[e].lecturer != '' ? listTime[e].lecturer : '',
+                                            listTime[e].status ? listTime[e].status : false,
                                           );
                                         },
                                         child: Container(
-                                          child: data.isEmpty
-                                              ? Text('ENROLLED KOSONG')
-                                              : data[e].enrolled.toString() == '[]'
-                                                  ? Text('ENROLLED KOSONG')
-                                                  : _studentEnrolled(data[e].enrolled),
+                                          child: listTime[e].enrolled.isNotEmpty
+                                              ? _studentEnrolled(listTime[e].enrolled)
+                                              : Text('ENROLLED KOSONG'),
                                         ),
                                       ),
                                     ),
@@ -410,11 +413,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      data.isEmpty
-                                          ? 'LECTURER KOSONG'
-                                          : data[e].lecturer.toString() == ''
-                                              ? 'LECTURER KOSONG'
-                                              : data[e].lecturer,
+                                      listTime[e].lecturer != ''
+                                          ? listTime[e].lecturer
+                                          : 'LECTURER KOSONG',
                                     ),
                                     sizedBox,
                                   ],
@@ -429,11 +430,9 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       'Status',
                                       style: tableHeadStyle,
                                     ),
-                                    data.isEmpty
-                                        ? _statusAvailableBadge()
-                                        : data[e].status.toString() == 'true'
-                                            ? _statusBookedBadge()
-                                            : _statusAvailableBadge(),
+                                    listTime[e].status
+                                        ? _statusBookedBadge()
+                                        : _statusAvailableBadge(),
                                     sizedBox,
                                   ],
                                 ),

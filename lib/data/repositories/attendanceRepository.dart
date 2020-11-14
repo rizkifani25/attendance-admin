@@ -1,5 +1,6 @@
 import 'package:attendance_admin/data/dataproviders/attendanceAPI.dart';
 import 'package:attendance_admin/models/models.dart';
+import 'package:attendance_admin/models/room_detail_response.dart';
 import 'package:flutter/cupertino.dart';
 
 class AttendanceRepository {
@@ -20,9 +21,9 @@ class AttendanceRepository {
     return attendanceApi.getMajorList();
   }
 
-  Future<List<Time>> getRoomDetail(String roomName, String date) async {
-    List<Time> roomDetail = await attendanceApi.getRoomDetail(roomName, date);
-    return roomDetail;
+  Future<RoomDetailResponse> getRoomDetail(String roomName, String date) async {
+    RoomDetailResponse roomDetailResponse = await attendanceApi.getRoomDetail(roomName, date);
+    return roomDetailResponse;
   }
 
   // Admin
@@ -57,4 +58,19 @@ class AttendanceRepository {
     return basicResponse;
   }
   // Admin
+
+  Future<BasicResponse> updateRoomData(
+    String time,
+    String roomName,
+    String date,
+    Time updatedTime,
+  ) async {
+    BasicResponse basicResponse = await attendanceApi.updateRoomDetail(
+      time,
+      roomName,
+      date,
+      updatedTime,
+    );
+    return basicResponse;
+  }
 }
