@@ -4,7 +4,7 @@ class Student {
   String password;
   String batch;
   String major;
-  Object additionalData;
+  List historyRoom;
 
   Student({
     this.studentId,
@@ -12,7 +12,7 @@ class Student {
     this.password,
     this.batch,
     this.major,
-    this.additionalData,
+    this.historyRoom,
   });
 
   Map<String, dynamic> toJson() {
@@ -22,7 +22,7 @@ class Student {
     data["password"] = this.password;
     data["batch"] = this.batch;
     data["major"] = this.major;
-    data["additional_data"] = this.additionalData;
+    data["history_room"] = this.historyRoom;
     return data;
   }
 
@@ -33,6 +33,6 @@ class Student {
         password: json['password'],
         batch: json['batch'],
         major: json['major'],
-        additionalData: json['additional_data']);
+        historyRoom: json['history_room']);
   }
 }
