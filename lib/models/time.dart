@@ -2,11 +2,13 @@ import 'models.dart';
 
 class Time {
   bool status;
+  String time;
   List<Enrolled> enrolled;
   String lecturer;
   String subject;
 
   Time({
+    this.time,
     this.status,
     this.enrolled,
     this.lecturer,
@@ -24,6 +26,7 @@ class Time {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
+    data['time'] = this.time;
     data['status'] = this.status;
     data['enrolled'] = this.enrolled;
     data['lecturer'] = this.lecturer;
@@ -37,6 +40,7 @@ class Time {
       List<Enrolled> _enrolled = tagObjsJson.map((e) => Enrolled.fromJson(e)).toList();
 
       return Time(
+        time: json['time'],
         status: json['status'],
         enrolled: _enrolled,
         lecturer: json['lecturer'],
@@ -44,6 +48,7 @@ class Time {
       );
     } else {
       return Time(
+        time: json['time'],
         status: json['status'],
         enrolled: json['enrolled'],
         lecturer: json['lecturer'],

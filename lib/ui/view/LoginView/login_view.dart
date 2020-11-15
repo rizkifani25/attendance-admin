@@ -143,7 +143,7 @@ class __SignInFormState extends State<_SignInForm> {
                       height: 50,
                       child: Center(
                         child: Text(
-                          'Attendance App',
+                          'Admin Attendance App',
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                         ),
                       ),
