@@ -1,26 +1,26 @@
 class Admin {
-  final String username;
-  final String password;
+  String email;
+  String password;
 
   Admin({
-    this.username,
+    this.email,
     this.password,
   });
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data['username'] = username;
+    data['email'] = email;
     data['password'] = this.password;
     return data;
   }
 
   factory Admin.fromJson(Map<String, dynamic> json) {
     return Admin(
-      username: json['username'],
+      email: json['email'],
       password: json['password'],
     );
   }
 
   @override
-  String toString() => 'Admin { username: $username, password: $password }';
+  String toString() => 'Admin { email: $email, password: $password }';
 }

@@ -1,16 +1,15 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
 import 'package:attendance_admin/models/room_detail_response.dart';
+import 'package:attendance_admin/ui/components/components.dart';
 import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
-import 'package:attendance_admin/ui/widgets/calendar.dart';
-import 'package:attendance_admin/ui/widgets/room_register_controller.dart';
-import 'package:attendance_admin/ui/widgets/student_add_new_panel.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'room_register_controller.dart';
 
 class RoomDetailController extends StatefulWidget {
   @override
@@ -24,7 +23,6 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
 
   @override
   void initState() {
-    super.initState();
     _selectedRoom = 1;
     _dateNow = DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
     BlocProvider.of<DashboardBloc>(context).add(
@@ -33,6 +31,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
         date: _dateNow,
       ),
     );
+    super.initState();
   }
 
   @override
@@ -133,7 +132,11 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     ).whenComplete(() => _handleSendDateAndRoomName());
   }
 
-  _handleShowPanelAddNewStudentButton(BuildContext context) {
+  _handleDetailsButton(
+    BuildContext context,
+    String time,
+    RoomDetailResponse data,
+  ) {
     showModalBottomSheet<void>(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -153,139 +156,124 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
               topRight: Radius.circular(20),
             ),
           ),
-          child: StudentAddNew(),
+          child: Text('testing'),
         );
       },
-    ).whenComplete(() => _handleSendDateAndRoomName());
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (context, state) {
-          if (state is DashboardLoadData) {
-            _listRooms = state.listRoomTime;
-            return Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Select Room : ',
-                          style: TextStyle(
-                            color: greyColor,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                      DropdownButton(
-                        hint: Text('Select Room'),
-                        value: _selectedRoom,
-                        items: state.listRoomTime.map((e) {
-                          return DropdownMenuItem(
-                            child: Text(e.room),
-                            value: e.id,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRoom = value;
-                          });
-                          _handleSendDateAndRoomName();
-                        },
-                      ),
-                      SizedBox(
-                        width: 50,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          'Select Date : ',
-                          style: TextStyle(
-                            color: greyColor,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                      FlatButton(
-                        child: Padding(
-                          padding: EdgeInsets.all(7),
+      body: Container(
+        margin: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 350,
+                  child: Card(
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(10),
                           child: Text(
-                            _dateNow,
+                            'Select Room : ',
                             style: TextStyle(
-                              color: primaryColor,
+                              color: greyColor,
                               fontSize: 24,
                             ),
                           ),
                         ),
-                        focusColor: hoverColor,
-                        color: transparentColor,
-                        onPressed: () => _handleCalendarButton(context),
-                      ),
-                      SizedBox(
-                        width: 50,
-                      ),
-                      FlatButton(
-                        child: Padding(
-                          padding: EdgeInsets.all(7),
+                        BlocBuilder<DashboardBloc, DashboardState>(
+                          builder: (context, state) {
+                            if (state is DashboardLoadData) {
+                              _listRooms = state.listRoomTime;
+                              return DropdownButton(
+                                hint: Text('Select Room'),
+                                value: _selectedRoom,
+                                items: state.listRoomTime.map((e) {
+                                  return DropdownMenuItem(
+                                    child: Text(e.room),
+                                    value: e.id,
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedRoom = value;
+                                  });
+                                  _handleSendDateAndRoomName();
+                                },
+                              );
+                            }
+                            return Center(
+                              child: Container(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 350,
+                  child: Card(
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(10),
                           child: Text(
-                            'Add New Student',
+                            'Select Date : ',
                             style: TextStyle(
-                              color: primaryColor,
+                              color: greyColor,
                               fontSize: 24,
                             ),
                           ),
                         ),
-                        focusColor: hoverColor,
-                        color: transparentColor,
-                        onPressed: () => _handleShowPanelAddNewStudentButton(context),
-                      ),
-                    ],
+                        FlatButton(
+                          child: Padding(
+                            padding: EdgeInsets.all(7),
+                            child: Text(
+                              _dateNow,
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                          focusColor: hoverColor,
+                          color: transparentColor,
+                          onPressed: () => _handleCalendarButton(context),
+                        ),
+                      ],
+                    ),
                   ),
-                  Container(
-                    child: _tableRoomDetail(state.detailRoom, state.listTime),
-                  ),
-                ],
-              ),
-            );
-          }
-          if (state is DashboardLoadDataFailure) {
-            Fluttertoast.showToast(
-              webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-              msg: state.message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: redColor,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
-          }
-          if (state is DashboardLoadDataSuccess) {
-            Fluttertoast.showToast(
-              webBgColor: "linear-gradient(to right, #2e7d32, #388e3c)",
-              msg: state.message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: greenColor,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
-          }
-          return Center(
-            child: Container(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-              ),
+                ),
+              ],
             ),
-          );
-        },
+            BlocBuilder<DashboardBloc, DashboardState>(
+              builder: (context, state) {
+                if (state is DashboardLoadData) {
+                  return Container(
+                    child: _tableRoomDetail(state.detailRoom, state.listTime),
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -299,7 +287,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     );
     final sizedBox = SizedBox(height: 12);
     final ScrollController scrollController = ScrollController();
-    final minWidthColumn = MediaQuery.of(context).size.width / 5.5;
+    final minWidthColumn = MediaQuery.of(context).size.width / 7;
     List<Time> listTime = [
       data.listTime.time1,
       data.listTime.time2,
@@ -434,6 +422,31 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                         ? _statusBookedBadge()
                                         : _statusAvailableBadge(),
                                     sizedBox,
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                constraints: BoxConstraints(minWidth: minWidthColumn),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      'Details',
+                                      style: tableHeadStyle,
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.info_outline_rounded),
+                                      onPressed: () {
+                                        _handleDetailsButton(
+                                          context,
+                                          time[e],
+                                          data,
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
                                   ],
                                 ),
                               ),

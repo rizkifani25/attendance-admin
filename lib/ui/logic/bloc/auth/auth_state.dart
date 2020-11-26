@@ -14,12 +14,12 @@ class AuthLoading extends AuthState {}
 class AuthNotAuthenticated extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
-  final Admin admin;
+  final String adminEmail;
 
-  AuthAuthenticated({@required this.admin});
+  AuthAuthenticated({@required this.adminEmail});
 
   @override
-  List<Object> get props => [admin];
+  List<Object> get props => [adminEmail];
 }
 
 class AuthFailure extends AuthState {

@@ -11,8 +11,9 @@ part 'student_state.dart';
 
 class StudentBloc extends Bloc<StudentEvent, StudentState> {
   final AttendanceRepository attendanceRepository;
+  final StudentRepository studentRepository;
 
-  StudentBloc({this.attendanceRepository}) : super(StudentInitial());
+  StudentBloc({this.attendanceRepository, this.studentRepository}) : super(StudentInitial());
 
   List<Major> _listOfMajor;
 
@@ -20,6 +21,17 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
   Stream<StudentState> mapEventToState(
     StudentEvent event,
   ) async* {
+    // Delete
+    if (event is DeleteStudent) {
+      yield* _mapDeleteStudentToState(event);
+    }
+
+    // Listing
+    if (event is GetStudentList) {
+      yield* _mapGetStudentListToState(event);
+    }
+
+    // Add new
     if (event is GetStudentAddNewPageData) {
       yield* _mapGetStudentAddNewPageDataToState(event);
     }
@@ -28,6 +40,36 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     }
   }
 
+  // Delete
+  Stream<StudentState> _mapDeleteStudentToState(DeleteStudent event) async* {
+    yield DeleteStudentLoading();
+
+    try {
+      final basicResponse = await studentRepository.deleteStudent(studentId: event.studentId);
+      if (basicResponse.responseCode != 200) {
+        yield DeleteStudentFailed(message: basicResponse.responseMessage);
+      } else {
+        yield DeleteStudentSuccess(message: basicResponse.responseMessage);
+      }
+    } catch (e) {
+      yield DeleteStudentFailed(message: 'An unknown error occurred when delete student');
+    }
+  }
+
+  // Listing
+  Stream<StudentState> _mapGetStudentListToState(GetStudentList event) async* {
+    yield StudentListingLoading();
+
+    try {
+      final _listStudent = await studentRepository.getListStudent(studentId: event.studentId);
+      yield StudentListingSuccess(listStudent: _listStudent);
+    } catch (e) {
+      print(e);
+      yield StudentListingFailed(message: 'An unknown error occurred when listing student');
+    }
+  }
+
+  // Add new
   Stream<StudentState> _mapGetStudentAddNewPageDataToState(GetStudentAddNewPageData event) async* {
     yield StudentAddNewPageLoading();
 
@@ -53,7 +95,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     yield StudentAddNewPageLoading();
 
     try {
-      final basicResponse = await attendanceRepository.registerNewStudent(
+      final basicResponse = await studentRepository.registerNewStudent(
         event.studentId,
         event.studentName,
         event.password,

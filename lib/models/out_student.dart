@@ -19,10 +19,10 @@ class OutStudent {
 
   factory OutStudent.fromJson(Map<String, dynamic> json) {
     return OutStudent(
-      image: json['image'],
-      time: json['time'],
-      positionStudent: json['position'],
-      distance: json['distance'],
+      image: json['image'] ?? '-',
+      time: json['time'] ?? '-',
+      positionStudent: PositionStudent.fromJson(json['position']),
+      distance: json['distance'] ?? 0.0,
     );
   }
 }

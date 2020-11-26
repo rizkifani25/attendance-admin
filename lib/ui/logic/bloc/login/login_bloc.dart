@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:attendance_admin/data/repositories/attendanceRepository.dart';
-import 'package:attendance_admin/ui/logic/bloc/auth/auth_bloc.dart';
+import 'package:attendance_admin/data/repositories/repositories.dart';
+import 'package:attendance_admin/models/models.dart';
+import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +11,10 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final AttendanceRepository attendanceRepository;
+  final AdminRepository adminRepository;
   final AuthBloc authBloc;
 
-  LoginBloc({this.attendanceRepository, this.authBloc}) : super(LoginInitial());
+  LoginBloc({this.adminRepository, this.authBloc}) : super(LoginInitial());
 
   @override
   Stream<LoginState> mapEventToState(
@@ -28,15 +29,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     yield LoginLoading();
 
     try {
-      final admin = await attendanceRepository.getLoginInfo(event.username, event.password);
-      if (admin != null) {
-        authBloc.add(UserLoggedIn(admin: admin));
+      SignInResponse signInResponse = await adminRepository.signIn(event.admin);
+      if (signInResponse.message.toLowerCase() == 'login success') {
+        authBloc.add(UserLoggedIn(adminEmail: 'admin@president.ac.id'));
         yield LoginSuccess();
       } else {
-        yield LoginFailure(error: 'Something very weird just happened');
+        yield LoginFailure(
+          message: signInResponse.message.replaceAll(new RegExp(r'[\(\[].*?[\)\]]'), ''),
+        );
       }
     } catch (e) {
-      yield LoginFailure(error: 'An unknown error occurred when login');
+      print(e.toString());
+      yield LoginFailure(message: 'An unknown error occurred when login');
     }
   }
 }

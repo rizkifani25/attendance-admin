@@ -14,10 +14,10 @@ class LoginLoading extends LoginState {}
 class LoginSuccess extends LoginState {}
 
 class LoginFailure extends LoginState {
-  final String error;
+  final String message;
 
-  LoginFailure({@required this.error});
+  LoginFailure({@required this.message});
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [message];
 }

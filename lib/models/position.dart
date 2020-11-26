@@ -13,8 +13,8 @@ class PositionStudent {
 
   factory PositionStudent.fromJson(Map<String, dynamic> json) {
     return PositionStudent(
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: json['latitude'] ?? 0.0,
+      longitude: json['longitude'] ?? 0.0,
     );
   }
 }

@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
-import 'package:attendance_admin/models/register_room_request.dart';
-import 'package:attendance_admin/models/room_detail_response.dart';
+import 'package:attendance_admin/ui/logic/service/services.dart';
 import 'package:http/http.dart' as http;
 
 class AttendanceApi {
@@ -21,22 +20,16 @@ class AttendanceApi {
     return Major.getMajor();
   }
 
-  Future<Admin> loginAdmin(String username, String password) async {
+  Future<SignInResponse> signInAdmin(Admin admin) async {
     try {
-      final String loginAdminUrl =
-          apiURL + 'admin/login?username=' + username + '&password=' + password;
-      final http.Response response = await http.post(loginAdminUrl);
+      SignInResponse signInResponse = await FireBaseAuthService.signInWithEmail(admin: admin);
 
-      if (response.statusCode != 200) {
-        throw Exception('Failure');
+      if (signInResponse.user != null) {
+        SessionManagerService().setAdmin(signInResponse.user);
+        return SignInResponse(message: 'Login Success');
+      } else {
+        return SignInResponse(message: signInResponse.message);
       }
-
-      var responseBody = jsonDecode(response.body);
-      var finalResponse = Admin(
-        username: responseBody['data'][0]['username'],
-        password: responseBody['data'][0]['password'],
-      );
-      return finalResponse;
     } catch (e) {
       print(e.toString());
       throw Exception('Failure');
@@ -55,6 +48,52 @@ class AttendanceApi {
 
       var responseBody = jsonDecode(response.body);
       return RoomDetailResponse.fromJson(responseBody['data']);
+    } catch (e) {
+      print(e.toString());
+      throw Exception('Failure');
+    }
+  }
+
+  Future<BasicResponse> deleteStudent({String studentId}) async {
+    try {
+      final String deleteStudentUrl = apiURL + 'student/delete?student_id=' + studentId;
+      var response = await http.post(deleteStudentUrl);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failure');
+      }
+
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['data'] != null) {
+        BasicResponse basicResponse = BasicResponse.fromJson(responseBody['data']);
+        return basicResponse;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception('Failure');
+    }
+  }
+
+  Future<List<Student>> getListStudent({String studentId}) async {
+    try {
+      String param = studentId != null ? 'student/list?student_id=' + studentId : 'student/list';
+      final String listStudentUrl = apiURL + param;
+      var response = await http.post(listStudentUrl);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failure');
+      }
+
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['data'] != null) {
+        var tagObjsJson = responseBody['data'] as List;
+        List<Student> listStudent = tagObjsJson.map((e) => Student.fromJson(e)).toList();
+        return listStudent;
+      } else {
+        return null;
+      }
     } catch (e) {
       print(e.toString());
       throw Exception('Failure');

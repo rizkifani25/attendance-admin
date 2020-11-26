@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons:
   modal_bottom_sheet:
   badges:
+  firebase_auth:
+  firebase_core:
 
 
 dev_dependencies:

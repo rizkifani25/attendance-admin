@@ -7,6 +7,27 @@ abstract class StudentEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// Delete
+class DeleteStudent extends StudentEvent {
+  final String studentId;
+
+  DeleteStudent({this.studentId});
+
+  @override
+  List<Object> get props => [studentId];
+}
+
+// Listing
+class GetStudentList extends StudentEvent {
+  final String studentId;
+
+  GetStudentList({this.studentId});
+
+  @override
+  List<Object> get props => [studentId];
+}
+
+// Add new
 class GetStudentAddNewPageData extends StudentEvent {
   final List<Major> listMajor;
 

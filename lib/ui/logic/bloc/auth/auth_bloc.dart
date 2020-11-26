@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:attendance_admin/data/repositories/repositories.dart';
-import 'package:attendance_admin/models/admin.dart';
-import 'package:attendance_admin/models/models.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +9,9 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AttendanceRepository attendanceRepository;
+  final AdminRepository adminRepository;
 
-  AuthBloc({@required this.attendanceRepository}) : super(AuthInitial());
+  AuthBloc({this.adminRepository}) : super(AuthInitial());
 
   @override
   Stream<AuthState> mapEventToState(
@@ -34,24 +32,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Stream<AuthState> _mapAppLoadedToState(AppLoaded event) async* {
     yield AuthLoading();
+
     try {
-      final Admin currentAdmin = await attendanceRepository.getCurrentLoginInfo();
-      if (currentAdmin != null) {
-        yield AuthAuthenticated(admin: currentAdmin);
+      final String currentAdminEmail = await adminRepository.getCurrentSignInInfo();
+
+      if (currentAdminEmail != null) {
+        yield AuthAuthenticated(adminEmail: currentAdminEmail);
       } else {
         yield AuthNotAuthenticated();
       }
     } catch (e) {
-      yield AuthFailure(message: e ?? 'An unknown error occurred when auth');
+      yield AuthFailure(message: 'An unknown error occurred when auth');
+      yield AuthNotAuthenticated();
     }
   }
 
   Stream<AuthState> _mapUserLoggedInToState(UserLoggedIn event) async* {
-    yield AuthAuthenticated(admin: event.admin);
+    yield AuthAuthenticated(adminEmail: event.adminEmail);
   }
 
   Stream<AuthState> _mapUserLoggedOutToState(UserLoggedOut event) async* {
-    await attendanceRepository.logOutAdmin();
+    // await adminRepository.logOutAdmin();
     yield AuthNotAuthenticated();
   }
 }

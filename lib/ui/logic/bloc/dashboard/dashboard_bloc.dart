@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:attendance_admin/data/repositories/attendanceRepository.dart';
+import 'package:attendance_admin/data/repositories/repositories.dart';
 import 'package:attendance_admin/models/models.dart';
-import 'package:attendance_admin/models/room_detail_response.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 

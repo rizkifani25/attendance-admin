@@ -8,11 +8,10 @@ abstract class LoginEvent extends Equatable {
 }
 
 class LoginAdminWithUsername extends LoginEvent {
-  final String username;
-  final String password;
+  final Admin admin;
 
-  LoginAdminWithUsername({@required this.username, @required this.password});
+  LoginAdminWithUsername({@required this.admin});
 
   @override
-  List<Object> get props => [username, password];
+  List<Object> get props => [admin];
 }

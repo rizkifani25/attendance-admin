@@ -1,9 +1,15 @@
 import 'package:attendance_admin/constant/Constant.dart';
+import 'package:attendance_admin/models/attend_student.dart';
 import 'package:attendance_admin/models/enrolled_student.dart';
 import 'package:attendance_admin/models/models.dart';
+import 'package:attendance_admin/models/out_student.dart';
+import 'package:attendance_admin/models/position.dart';
+import 'package:attendance_admin/models/status_attendance.dart';
+import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
 import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RoomRegister extends StatefulWidget {
   final String time;
@@ -85,6 +91,37 @@ class _RoomRegisterState extends State<RoomRegister> {
         roomName: _roomName,
         updatedTime: updateTime,
       ),
+    );
+  }
+
+  _handleValidateStudentId(String studentId) {
+    BlocProvider.of<StudentBloc>(context).add(GetStudentList(studentId: studentId));
+    setState(
+      () {
+        studentInputController.text = '';
+        listChips.add(
+          Enrolled(
+            studentId: studentId,
+            statusAttendance: new StatusAttendance(
+              byDistance: '-',
+              byPhoto: '-',
+              byTime: '-',
+            ),
+            attendStudent: new AttendStudent(
+              image: '-',
+              time: '-',
+              positionStudent: new PositionStudent(latitude: 0.0, longitude: 0.0),
+              distance: 0.0,
+            ),
+            outStudent: new OutStudent(
+              image: '-',
+              time: '-',
+              positionStudent: new PositionStudent(latitude: 0.0, longitude: 0.0),
+              distance: 0.0,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -171,12 +208,7 @@ class _RoomRegisterState extends State<RoomRegister> {
               padding: const EdgeInsets.all(15),
               child: TextField(
                 controller: studentInputController,
-                onSubmitted: (value) {
-                  setState(() {
-                    studentInputController.text = '';
-                    listChips.add(Enrolled(studentId: value, status: 1));
-                  });
-                },
+                onSubmitted: (value) => _handleValidateStudentId(value),
                 decoration: InputDecoration(
                   hintText: 'Input a student id',
                   isDense: true,
@@ -184,19 +216,39 @@ class _RoomRegisterState extends State<RoomRegister> {
                 keyboardType: TextInputType.emailAddress,
               ),
             ),
-            Wrap(
-              children: listChips.map((e) {
-                return Padding(
-                  padding: EdgeInsets.all(5),
-                  child: InputChip(
-                    avatar: CircleAvatar(
-                      child: Icon(Icons.account_circle),
-                    ),
-                    label: Text(e.studentId),
-                    onDeleted: () => setState(() => listChips.remove(e)),
-                  ),
-                );
-              }).toList(),
+            BlocBuilder<StudentBloc, StudentState>(
+              builder: (context, state) {
+                if (state is StudentListingSuccess) {
+                  if (state.listStudent.length != 1) {
+                    Fluttertoast.showToast(
+                      webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
+                      msg: 'Student id not registered.',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: redColor,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    listChips.removeLast();
+                  }
+                  return Wrap(
+                    children: listChips.map((e) {
+                      return Padding(
+                        padding: EdgeInsets.all(5),
+                        child: InputChip(
+                          avatar: CircleAvatar(
+                            child: Icon(Icons.account_circle),
+                          ),
+                          label: Text(e.studentId),
+                          onDeleted: () => setState(() => listChips.remove(e)),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }
+                return Container();
+              },
             ),
             SizedBox(
               height: 20,

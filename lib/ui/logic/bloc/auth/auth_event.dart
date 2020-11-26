@@ -10,12 +10,12 @@ abstract class AuthEvent extends Equatable {
 class AppLoaded extends AuthEvent {}
 
 class UserLoggedIn extends AuthEvent {
-  final Admin admin;
+  final String adminEmail;
 
-  UserLoggedIn({@required this.admin});
+  UserLoggedIn({@required this.adminEmail});
 
   @override
-  List<Object> get props => [admin];
+  List<Object> get props => [adminEmail];
 }
 
 class UserLoggedOut extends AuthEvent {}

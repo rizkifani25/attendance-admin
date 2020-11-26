@@ -1,57 +1,11 @@
 import 'package:attendance_admin/constant/Constant.dart';
-import 'package:attendance_admin/ui/logic/bloc/auth/auth_bloc.dart';
-import 'package:attendance_admin/ui/logic/bloc/login/login_bloc.dart';
+import 'package:attendance_admin/models/models.dart';
+import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        minimum: const EdgeInsets.all(30),
-        child: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthFailure) {
-              Fluttertoast.showToast(
-                webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                msg: 'Authentication fail',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
-                backgroundColor: redColor,
-                textColor: Colors.white,
-                fontSize: 16.0,
-              );
-            }
-          },
-          child: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is AuthAuthenticated) {
-                Navigator.of(context).pushNamed('/');
-              }
-
-              if (state is AuthNotAuthenticated) {
-                return _AuthForm();
-              }
-
-              return Center(
-                child: Container(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AuthForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -72,14 +26,23 @@ class __SignInFormState extends State<_SignInForm> {
   final _passwordController = TextEditingController();
   bool _autoValidate = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   _handleLoginButton() {
+    Admin _admin = new Admin();
+    _admin.email = _usernameController.text.toString();
+    _admin.password = _passwordController.text.toString();
+
     if (_key.currentState.validate()) {
-      BlocProvider.of<LoginBloc>(context).add(
-        LoginAdminWithUsername(
-          username: _usernameController.text,
-          password: _passwordController.text,
-        ),
-      );
+      BlocProvider.of<LoginBloc>(context).add(LoginAdminWithUsername(admin: _admin));
     } else {
       setState(() {
         _autoValidate = true;
@@ -94,7 +57,7 @@ class __SignInFormState extends State<_SignInForm> {
         if (state is LoginFailure) {
           Fluttertoast.showToast(
             webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-            msg: state.error,
+            msg: state.message,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -153,17 +116,17 @@ class __SignInFormState extends State<_SignInForm> {
                         filled: true,
                         isDense: true,
                         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                        hintText: 'Username',
+                        hintText: 'Email',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(32.0),
                         ),
                       ),
                       controller: _usernameController,
-                      keyboardType: TextInputType.name,
+                      keyboardType: TextInputType.emailAddress,
                       autocorrect: false,
                       validator: (value) {
                         if (value == null) {
-                          return 'Username is required.';
+                          return 'Email is required.';
                         }
                         return null;
                       },
