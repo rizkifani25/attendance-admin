@@ -13,11 +13,11 @@ class StudentRepository {
     String major,
   ) async {
     BasicResponse basicResponse = await attendanceApi.addNewStudent(
-      studentId,
-      studentName,
-      password,
-      batch,
-      major,
+      studentId: studentId,
+      studentName: studentName,
+      password: password,
+      batch: batch,
+      major: major,
     );
     return basicResponse;
   }

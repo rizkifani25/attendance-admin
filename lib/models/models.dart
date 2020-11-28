@@ -13,3 +13,4 @@ export 'status_attendance.dart';
 export 'student.dart';
 export 'time.dart';
 export 'response/sign_in_response.dart';
+export 'lecturer.dart';

@@ -118,21 +118,30 @@ class _StudentAddNewState extends State<StudentAddNew> {
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: studentIdInputController,
-                        decoration: InputDecoration(hintText: 'Student Id'),
+                        decoration: InputDecoration(
+                          labelText: 'Student ID',
+                          hintText: '001201700038',
+                        ),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: studentNameInputController,
-                        decoration: InputDecoration(hintText: 'Student Name'),
+                        decoration: InputDecoration(
+                          labelText: 'Name',
+                          hintText: 'Muhammad Rizki Fani',
+                        ),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: passwordInputController,
-                        decoration: InputDecoration(hintText: 'Password'),
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'Password',
+                        ),
                         obscureText: true,
                       ),
                     ),
@@ -140,7 +149,10 @@ class _StudentAddNewState extends State<StudentAddNew> {
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: batchInputController,
-                        decoration: InputDecoration(hintText: 'Batch'),
+                        decoration: InputDecoration(
+                          labelText: 'Batch',
+                          hintText: '2017',
+                        ),
                       ),
                     ),
                     Container(
