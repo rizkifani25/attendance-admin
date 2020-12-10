@@ -88,14 +88,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     ).whenComplete(() => _handleSendDateAndRoomName());
   }
 
-  _handleEnrolledDetailButton(
-    BuildContext context,
-    String time,
-    String subject,
-    List<Enrolled> enrolled,
-    String lecturer,
-    bool status,
-  ) {
+  _handleEnrolledDetailButton(BuildContext context, String time, String subject, List<Enrolled> enrolled, Lecturer lecturer, RoomStatus status) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
@@ -132,11 +125,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     ).whenComplete(() => _handleSendDateAndRoomName());
   }
 
-  _handleDetailsButton(
-    BuildContext context,
-    String time,
-    RoomDetailResponse data,
-  ) {
+  _handleDetailsButton(BuildContext context, String time, RoomDetailResponse data) {
     showModalBottomSheet<void>(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -288,12 +277,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     final sizedBox = SizedBox(height: 12);
     final ScrollController scrollController = ScrollController();
     final minWidthColumn = MediaQuery.of(context).size.width / 7;
-    List<Time> listTime = [
-      data.listTime.time1,
-      data.listTime.time2,
-      data.listTime.time3,
-      data.listTime.time4
-    ];
+    List<Time> listTime = [data.listTime.time1, data.listTime.time2, data.listTime.time3, data.listTime.time4];
 
     return SizedBox(
       height: MediaQuery.of(context).size.height / 1.4,
@@ -348,9 +332,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      listTime[e].subject != ''
-                                          ? listTime[e].subject
-                                          : 'SUBJECT KOSONG',
+                                      listTime[e].subject != '-' ? listTime[e].subject : 'SUBJECT KOSONG',
                                     ),
                                     sizedBox,
                                   ],
@@ -372,18 +354,14 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                           _handleEnrolledDetailButton(
                                             context,
                                             time[e],
-                                            listTime[e].subject != '' ? listTime[e].subject : '',
-                                            listTime[e].enrolled.isEmpty
-                                                ? []
-                                                : listTime[e].enrolled,
-                                            listTime[e].lecturer != '' ? listTime[e].lecturer : '',
-                                            listTime[e].status ? listTime[e].status : false,
+                                            listTime[e].subject != '-' ? listTime[e].subject : '-',
+                                            listTime[e].enrolled.isEmpty ? [] : listTime[e].enrolled,
+                                            listTime[e].lecturer,
+                                            listTime[e].status,
                                           );
                                         },
                                         child: Container(
-                                          child: listTime[e].enrolled.isNotEmpty
-                                              ? _studentEnrolled(listTime[e].enrolled)
-                                              : Text('ENROLLED KOSONG'),
+                                          child: listTime[e].enrolled.isNotEmpty ? _studentEnrolled(listTime[e].enrolled) : Text('ENROLLED KOSONG'),
                                         ),
                                       ),
                                     ),
@@ -401,9 +379,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      listTime[e].lecturer != ''
-                                          ? listTime[e].lecturer
-                                          : 'LECTURER KOSONG',
+                                      listTime[e].lecturer.lecturerName != '-' ? listTime[e].lecturer.lecturerName : 'LECTURER KOSONG',
                                     ),
                                     sizedBox,
                                   ],
@@ -418,9 +394,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       'Status',
                                       style: tableHeadStyle,
                                     ),
-                                    listTime[e].status
-                                        ? _statusBookedBadge()
-                                        : _statusAvailableBadge(),
+                                    _statusBadge(listTime[e].status),
                                     sizedBox,
                                   ],
                                 ),
@@ -462,29 +436,15 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     );
   }
 
-  Widget _statusAvailableBadge() {
+  Widget _statusBadge(RoomStatus roomStatus) {
     return Badge(
       animationDuration: Duration(milliseconds: 300),
       animationType: BadgeAnimationType.scale,
       shape: BadgeShape.square,
-      badgeColor: greenColor,
+      badgeColor: roomStatus.status ? redColor : greenColor,
       borderRadius: BorderRadius.circular(8),
       badgeContent: Text(
-        'Available',
-        style: TextStyle(color: secondaryColor),
-      ),
-    );
-  }
-
-  Widget _statusBookedBadge() {
-    return Badge(
-      animationDuration: Duration(milliseconds: 300),
-      animationType: BadgeAnimationType.scale,
-      shape: BadgeShape.square,
-      badgeColor: redColor,
-      borderRadius: BorderRadius.circular(8),
-      badgeContent: Text(
-        'Booked',
+        roomStatus.statusMessage ?? 'Available',
         style: TextStyle(color: secondaryColor),
       ),
     );

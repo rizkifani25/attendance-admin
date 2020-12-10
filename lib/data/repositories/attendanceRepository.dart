@@ -24,19 +24,8 @@ class AttendanceRepository {
   }
 
   // Admin
-
-  Future<BasicResponse> updateRoomData(
-    String time,
-    String roomName,
-    String date,
-    Time updatedTime,
-  ) async {
-    BasicResponse basicResponse = await attendanceApi.updateRoomDetail(
-      time,
-      roomName,
-      date,
-      updatedTime,
-    );
+  Future<BasicResponse> updateRoomData(String time, String roomName, String date, Time updatedTime) async {
+    BasicResponse basicResponse = await attendanceApi.updateRoomDetail(time, roomName, date, updatedTime);
     return basicResponse;
   }
 }

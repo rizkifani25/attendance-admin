@@ -13,22 +13,21 @@ class DashboardView extends StatelessWidget {
           Container(
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                return _DashboardContent();
-                // if (state is AuthNotAuthenticated) {
-                //   return LoginView();
-                // }
+                if (state is AuthNotAuthenticated) {
+                  return LoginView();
+                }
 
-                // if (state is AuthAuthenticated) {
-                //   return _DashboardContent();
-                // }
+                if (state is AuthAuthenticated) {
+                  return _DashboardContent();
+                }
 
-                // return Center(
-                //   child: Container(
-                //     child: CircularProgressIndicator(
-                //       strokeWidth: 2,
-                //     ),
-                //   ),
-                // );
+                return Center(
+                  child: Container(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  ),
+                );
               },
             ),
           ),
@@ -251,34 +250,3 @@ class __DashboardContentState extends State<_DashboardContent> {
     );
   }
 }
-
-// appBar: AppBar(
-//         title: Row(
-//           children: [
-//             SizedBox(
-//               height: 50,
-//               width: 50,
-//               child: Image.asset(
-//                 'icon/calendar.png',
-//                 fit: BoxFit.contain,
-//               ),
-//             ),
-//             SizedBox(
-//               width: 20,
-//             ),
-//             Text('Attendance App Dashboard'),
-//           ],
-//         ),
-//         toolbarHeight: 65,
-//         backgroundColor: primaryColor,
-//         actions: [
-//           IconButton(
-//             icon: Icon(
-//               Icons.exit_to_app_rounded,
-//               color: secondaryColor,
-//             ),
-//             tooltip: 'Log Out',
-//             onPressed: () => _handleLogOut(),
-//           ),
-//         ],
-//       ),

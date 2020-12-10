@@ -34,6 +34,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       final roomDetail = await attendanceRepository.getRoomDetail(event.roomName, event.date);
 
       if (listOfRoom != null && roomDetail != null && listOfTime != null) {
+        roomDetail.toString();
         yield DashboardLoadData(
           listRoomTime: listOfRoom,
           listTime: listOfTime,
@@ -51,14 +52,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     yield DashboardLoading();
 
     try {
-      final roomUpdate = await attendanceRepository.updateRoomData(
-        event.time,
-        event.roomName,
-        event.date,
-        event.updatedTime,
-      );
+      final roomUpdate = await attendanceRepository.updateRoomData(event.time, event.roomName, event.date, event.updatedTime);
 
-      print(roomUpdate.responseCode);
       if (roomUpdate.responseCode == 200) {
         yield DashboardLoadDataSuccess(message: 'Data updated');
       } else {

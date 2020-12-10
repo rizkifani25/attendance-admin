@@ -14,7 +14,7 @@ class AdminRepository {
 
   // Current Admin Info
   Future<String> getCurrentSignInInfo() async {
-    Future<String> adminEmail = SessionManagerService().getAdmin();
+    String adminEmail = await SessionManagerService().getAdmin();
     return adminEmail;
   }
 

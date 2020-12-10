@@ -35,6 +35,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     if (event is GetStudentAddNewPageData) {
       yield* _mapGetStudentAddNewPageDataToState(event);
     }
+
     if (event is AddNewStudentWithForm) {
       yield* _mapAddNewStudentWithFormToState(event);
     }

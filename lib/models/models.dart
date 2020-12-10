@@ -14,3 +14,5 @@ export 'student.dart';
 export 'time.dart';
 export 'response/sign_in_response.dart';
 export 'lecturer.dart';
+export 'permission.dart';
+export 'room_status.dart';

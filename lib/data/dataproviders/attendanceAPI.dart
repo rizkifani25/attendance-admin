@@ -24,7 +24,6 @@ class AttendanceApi {
   Future<SignInResponse> signInAdmin(Admin admin) async {
     try {
       SignInResponse signInResponse = await FireBaseAuthService.signInWithEmail(admin: admin);
-
       if (signInResponse.user != null) {
         SessionManagerService().setAdmin(signInResponse.user);
         return SignInResponse(message: 'Login Success');
@@ -39,8 +38,7 @@ class AttendanceApi {
 
   Future<RoomDetailResponse> getRoomDetail(String roomName, String date) async {
     try {
-      final String listRoomDetailUrl =
-          apiURL + 'room/detail?room_name=' + roomName + '&date=' + date;
+      final String listRoomDetailUrl = apiURL + 'room/detail?room_name=' + roomName + '&date=' + date;
       final http.Response response = await http.post(listRoomDetailUrl);
 
       if (response.statusCode != 200) {
@@ -80,8 +78,7 @@ class AttendanceApi {
 
   Future<List<Lecturer>> getListLecturer({String lecturerName}) async {
     try {
-      String param =
-          lecturerName != null ? 'lecturer/list?lecturer_name=' + lecturerName : 'lecturer/list';
+      String param = lecturerName != null ? 'lecturer/list?lecturer_name=' + lecturerName : 'lecturer/list';
       final String listLecturerUrl = apiURL + param;
       var response = await http.post(listLecturerUrl);
 
@@ -103,19 +100,9 @@ class AttendanceApi {
     }
   }
 
-  Future<BasicResponse> addNewLecturer({
-    String lecturerEmail,
-    String lecturerName,
-    String password,
-  }) async {
+  Future<BasicResponse> addNewLecturer({String lecturerEmail, String lecturerName, String password}) async {
     try {
-      final String registerLecturerUrl = apiURL +
-          'lecturer/register?lecturer_email=' +
-          lecturerEmail +
-          '&lecturer_name=' +
-          lecturerName +
-          '&password=' +
-          password;
+      final String registerLecturerUrl = apiURL + 'lecturer/register?lecturer_email=' + lecturerEmail + '&lecturer_name=' + lecturerName + '&password=' + password;
       var response = await http.post(registerLecturerUrl);
 
       if (response.statusCode != 200) {
@@ -187,25 +174,9 @@ class AttendanceApi {
     }
   }
 
-  Future<BasicResponse> addNewStudent({
-    String studentId,
-    String studentName,
-    String password,
-    String batch,
-    String major,
-  }) async {
+  Future<BasicResponse> addNewStudent({String studentId, String studentName, String password, String batch, String major}) async {
     try {
-      final String registerStudentUrl = apiURL +
-          'student/register?student_id=' +
-          studentId +
-          '&student_name=' +
-          studentName +
-          '&password=' +
-          password +
-          '&batch=' +
-          batch +
-          '&major=' +
-          major;
+      final String registerStudentUrl = apiURL + 'student/register?student_id=' + studentId + '&student_name=' + studentName + '&password=' + password + '&batch=' + batch + '&major=' + major;
       var response = await http.post(registerStudentUrl);
 
       if (response.statusCode != 200) {
@@ -230,12 +201,7 @@ class AttendanceApi {
     }
   }
 
-  Future<BasicResponse> updateRoomDetail(
-    String time,
-    String roomName,
-    String date,
-    Time updatedTime,
-  ) async {
+  Future<BasicResponse> updateRoomDetail(String time, String roomName, String date, Time updatedTime) async {
     try {
       RegisterRoomRequest registerRoomRequest = new RegisterRoomRequest();
 
@@ -243,9 +209,6 @@ class AttendanceApi {
       registerRoomRequest.updatedTime = updatedTime;
       registerRoomRequest.date = date;
       registerRoomRequest.time = time;
-
-      print(jsonEncode(registerRoomRequest.toJson()));
-
       Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
       var response = await http.post(
@@ -253,8 +216,6 @@ class AttendanceApi {
         body: jsonEncode(registerRoomRequest.toJson()),
         headers: requestHeaders,
       );
-
-      print(response);
 
       if (response.statusCode != 200) {
         throw Exception('Failure');
