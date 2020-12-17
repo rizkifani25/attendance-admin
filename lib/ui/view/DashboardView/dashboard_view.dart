@@ -1,5 +1,6 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:attendance_admin/ui/view/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,20 +15,15 @@ class DashboardView extends StatelessWidget {
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 if (state is AuthNotAuthenticated) {
-                  return LoginView();
+                  // return LoginView();
+                  return _DashboardContent();
                 }
 
                 if (state is AuthAuthenticated) {
                   return _DashboardContent();
                 }
 
-                return Center(
-                  child: Container(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  ),
-                );
+                return WidgetLoadingIndicator(color: primaryColor);
               },
             ),
           ),
@@ -237,11 +233,7 @@ class __DashboardContentState extends State<_DashboardContent> {
                 if (state is PageLecturerView) {
                   return LecturerView();
                 }
-                return Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
-                );
+                return WidgetLoadingIndicator(color: primaryColor);
               },
             ),
           ),

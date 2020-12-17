@@ -56,24 +56,12 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 400,
-      width: 300,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(20),
-          ),
-        ),
-        elevation: 5.5,
-        child: SfDateRangePicker(
-          onSelectionChanged: _onSelectionChanged,
-          selectionMode: DateRangePickerSelectionMode.single,
-          initialSelectedRange: PickerDateRange(
-            DateTime.now().subtract(const Duration(days: 4)),
-            DateTime.now().add(const Duration(days: 3)),
-          ),
-        ),
+    return SfDateRangePicker(
+      onSelectionChanged: _onSelectionChanged,
+      selectionMode: DateRangePickerSelectionMode.single,
+      initialSelectedRange: PickerDateRange(
+        DateTime.now().subtract(const Duration(days: 4)),
+        DateTime.now().add(const Duration(days: 3)),
       ),
     );
   }

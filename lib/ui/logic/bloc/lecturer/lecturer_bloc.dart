@@ -48,7 +48,7 @@ class LecturerBloc extends Bloc<LecturerEvent, LecturerState> {
         yield DeleteLecturerSuccess(message: basicResponse.responseMessage);
       }
     } catch (e) {
-      yield DeleteLecturerFailed(message: 'An unknown error occurred when delete student');
+      yield DeleteLecturerFailed(message: 'An unknown error occurred when delete lecturer');
     }
   }
 
@@ -63,7 +63,7 @@ class LecturerBloc extends Bloc<LecturerEvent, LecturerState> {
       yield LecturerListingSuccess(listLecturer: _listLecturer);
     } catch (e) {
       print(e);
-      yield LecturerListingFailed(message: 'An unknown error occurred when listing student');
+      yield LecturerListingFailed(message: 'An unknown error occurred when listing lecturer');
     }
   }
 
@@ -83,7 +83,7 @@ class LecturerBloc extends Bloc<LecturerEvent, LecturerState> {
         yield LecturerAddNewSuccess(message: basicResponse.responseMessage);
       }
     } catch (e) {
-      yield LecturerAddNewFailed(message: 'An unknown error occurred when add new student');
+      yield LecturerAddNewFailed(message: 'An unknown error occurred when add new lecturer');
     }
   }
 }

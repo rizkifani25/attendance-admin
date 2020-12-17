@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class RoomDetailWidget extends StatefulWidget {
   final String time;
-  final RoomDetailResponse data;
+  final RoomDetail data;
 
   RoomDetailWidget({this.time, this.data});
 

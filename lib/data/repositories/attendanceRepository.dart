@@ -18,9 +18,9 @@ class AttendanceRepository {
     return attendanceApi.getMajorList();
   }
 
-  Future<RoomDetailResponse> getRoomDetail(String roomName, String date) async {
-    RoomDetailResponse roomDetailResponse = await attendanceApi.getRoomDetail(roomName, date);
-    return roomDetailResponse;
+  Future<BasicResponse> getRoomDetail(String roomName, String date) async {
+    BasicResponse basicResponse = await attendanceApi.getRoomDetail(roomName, date);
+    return basicResponse;
   }
 
   // Admin

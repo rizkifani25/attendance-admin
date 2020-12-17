@@ -2,10 +2,10 @@ import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
 import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
 import 'package:attendance_admin/ui/view/LecturerView/components/lecturer_view_components.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:attendance_admin/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class ListLecturerView extends StatefulWidget {
   @override
@@ -27,30 +27,46 @@ class _ListLecturerViewState extends State<ListLecturerView> {
   }
 
   _handleShowPanelAddNewStudentButton(BuildContext context) {
-    showModalBottomSheet<dynamic>(
-      backgroundColor: transparentColor,
-      isScrollControlled: true,
-      enableDrag: true,
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: LecturerAddnew(),
+        return CustomDialogBox(
+          children: [
+            LecturerAddnew(),
+          ],
         );
       },
-    ).whenComplete(() => BlocProvider.of<LecturerBloc>(context).add(GetLecturerList()));
+    ).then((value) => BlocProvider.of<LecturerBloc>(context).add(GetLecturerList()));
   }
 
   _handleDeleteButton(String lecturerEmail) {
-    BlocProvider.of<LecturerBloc>(context).add(DeleteLecturer(lecturerEmail: lecturerEmail));
-    BlocProvider.of<LecturerBloc>(context).add(GetLecturerList());
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialogBox(
+          children: [
+            Text(
+              'Delete lecturer ' + lecturerEmail + '?',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: FlatButton(
+                onPressed: () {
+                  BlocProvider.of<LecturerBloc>(context).add(DeleteLecturer(lecturerEmail: lecturerEmail));
+                  BlocProvider.of<LecturerBloc>(context).add(GetLecturerList());
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Yes',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -71,8 +87,7 @@ class _ListLecturerViewState extends State<ListLecturerView> {
                 ),
                 onChanged: (string) {
                   _debouncer.run(() {
-                    BlocProvider.of<LecturerBloc>(context)
-                        .add(GetLecturerList(lecturerName: string));
+                    BlocProvider.of<LecturerBloc>(context).add(GetLecturerList(lecturerName: string));
                   });
                 },
               ),
@@ -83,28 +98,17 @@ class _ListLecturerViewState extends State<ListLecturerView> {
               height: MediaQuery.of(context).size.height - 150,
               width: MediaQuery.of(context).size.width - 100,
               child: Scaffold(
-                body: BlocBuilder<LecturerBloc, LecturerState>(builder: (context, state) {
-                  if (state is LecturerListingSuccess) {
-                    return _tableListStudent(state.listLecturer);
-                  }
-                  if (state is LecturerListingFailed) {
-                    Fluttertoast.showToast(
-                      webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                      msg: state.message,
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: redColor,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  );
-                }),
+                body: BlocBuilder<LecturerBloc, LecturerState>(
+                  builder: (context, state) {
+                    if (state is LecturerListingSuccess) {
+                      return _tableListLecturer(state.listLecturer);
+                    }
+                    if (state is LecturerListingFailed) {
+                      ToastNotification().showToast(message: state.message, color: redColor);
+                    }
+                    return WidgetLoadingIndicator(color: primaryColor);
+                  },
+                ),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add New Student',
                   onPressed: () {
@@ -121,28 +125,10 @@ class _ListLecturerViewState extends State<ListLecturerView> {
             child: BlocBuilder<LecturerBloc, LecturerState>(
               builder: (context, state) {
                 if (state is DeleteLecturerSuccess) {
-                  Fluttertoast.showToast(
-                    webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                    msg: state.message,
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: greenColor,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
+                  ToastNotification().showToast(message: state.message, color: greenColor);
                 }
                 if (state is DeleteLecturerFailed) {
-                  Fluttertoast.showToast(
-                    webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                    msg: state.message,
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: redColor,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
+                  ToastNotification().showToast(message: state.message, color: redColor);
                 }
                 return Text('');
               },
@@ -153,16 +139,11 @@ class _ListLecturerViewState extends State<ListLecturerView> {
     );
   }
 
-  Widget _tableListStudent(List<Lecturer> listStudent) {
+  Widget _tableListLecturer(List<Lecturer> listStudent) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: DataTable(
-        columns: <DataColumn>[
-          DataColumn(label: Text('Email')),
-          DataColumn(label: Text('Name')),
-          DataColumn(label: Text('History Room')),
-          DataColumn(label: Text('Actions'))
-        ],
+        columns: <DataColumn>[DataColumn(label: Text('Email')), DataColumn(label: Text('Name')), DataColumn(label: Text('History Room')), DataColumn(label: Text('Actions'))],
         rows: listStudent
             .map(
               (e) => DataRow(

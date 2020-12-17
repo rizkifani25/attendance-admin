@@ -1,8 +1,8 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/ui/logic/bloc/lecturer/lecturer_bloc.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LecturerAddnew extends StatefulWidget {
   @override
@@ -30,9 +30,7 @@ class _LecturerAddnewState extends State<LecturerAddnew> {
   }
 
   _handleAddNewLecturer() {
-    if (lecturerEmailInputController.text != '' &&
-        lecturerNameInputController.text != '' &&
-        passwordInputController.text != '') {
+    if (lecturerEmailInputController.text != '' && lecturerNameInputController.text != '' && passwordInputController.text != '') {
       BlocProvider.of<LecturerBloc>(context).add(
         AddNewLecturerWithForm(
           lecturerEmail: lecturerEmailInputController.text,
@@ -41,16 +39,7 @@ class _LecturerAddnewState extends State<LecturerAddnew> {
         ),
       );
     } else {
-      Fluttertoast.showToast(
-        webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-        msg: 'All fields must not blank',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: redColor,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      ToastNotification().showToast(message: 'All fields must not blank', color: redColor);
     }
   }
 
@@ -59,28 +48,10 @@ class _LecturerAddnewState extends State<LecturerAddnew> {
     return BlocBuilder<LecturerBloc, LecturerState>(
       builder: (context, state) {
         if (state is LecturerAddNewFailed) {
-          Fluttertoast.showToast(
-            webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-            msg: state.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: redColor,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
+          ToastNotification().showToast(message: state.message, color: redColor);
         }
         if (state is LecturerAddNewSuccess) {
-          Fluttertoast.showToast(
-            webBgColor: "linear-gradient(to right, #2e7d32, #388e3c)",
-            msg: state.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: greenColor,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
+          ToastNotification().showToast(message: state.message, color: greenColor);
         }
         return Column(
           children: <Widget>[

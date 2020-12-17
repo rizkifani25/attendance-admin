@@ -36,7 +36,9 @@ class AttendanceApi {
     }
   }
 
-  Future<RoomDetailResponse> getRoomDetail(String roomName, String date) async {
+  Future<BasicResponse> getRoomDetail(String roomName, String date) async {
+    BasicResponse basicResponse;
+
     try {
       final String listRoomDetailUrl = apiURL + 'room/detail?room_name=' + roomName + '&date=' + date;
       final http.Response response = await http.post(listRoomDetailUrl);
@@ -46,7 +48,16 @@ class AttendanceApi {
       }
 
       var responseBody = jsonDecode(response.body);
-      return RoomDetailResponse.fromJson(responseBody['data']);
+      if (responseBody['responseCode'] != 200) {
+        basicResponse = new BasicResponse(
+          responseCode: 400,
+          responseMessage: responseBody['responseMessage'],
+        );
+        return basicResponse;
+      } else {
+        basicResponse = BasicResponse.fromJson(responseBody);
+        return basicResponse;
+      }
     } catch (e) {
       print(e.toString());
       throw Exception('Failure');
@@ -150,7 +161,9 @@ class AttendanceApi {
     }
   }
 
-  Future<List<Student>> getListStudent({String studentId}) async {
+  Future<BasicResponse> getListStudent({String studentId}) async {
+    BasicResponse basicResponse;
+
     try {
       String param = studentId != null ? 'student/list?student_id=' + studentId : 'student/list';
       final String listStudentUrl = apiURL + param;
@@ -161,12 +174,16 @@ class AttendanceApi {
       }
 
       var responseBody = jsonDecode(response.body);
-      if (responseBody['data'] != null) {
-        var tagObjsJson = responseBody['data'] as List;
-        List<Student> listStudent = tagObjsJson.map((e) => Student.fromJson(e)).toList();
-        return listStudent;
+
+      if (responseBody['responseCode'] != 200) {
+        basicResponse = new BasicResponse(
+          responseCode: 400,
+          responseMessage: responseBody['responseMessage'],
+        );
+        return basicResponse;
       } else {
-        return null;
+        basicResponse = BasicResponse.fromJson(responseBody);
+        return basicResponse;
       }
     } catch (e) {
       print(e.toString());
@@ -202,6 +219,8 @@ class AttendanceApi {
   }
 
   Future<BasicResponse> updateRoomDetail(String time, String roomName, String date, Time updatedTime) async {
+    BasicResponse basicResponse;
+
     try {
       RegisterRoomRequest registerRoomRequest = new RegisterRoomRequest();
 
@@ -222,15 +241,15 @@ class AttendanceApi {
       }
 
       var responseBody = jsonDecode(response.body);
+
       if (responseBody['responseCode'] != 200) {
-        BasicResponse basicResponse = new BasicResponse(
+        basicResponse = new BasicResponse(
           responseCode: 400,
           responseMessage: responseBody['responseMessage'],
         );
         return basicResponse;
       } else {
-        var responseBody = jsonDecode(response.body);
-        BasicResponse basicResponse = BasicResponse.fromJson(responseBody);
+        basicResponse = BasicResponse.fromJson(responseBody);
         return basicResponse;
       }
     } catch (e) {

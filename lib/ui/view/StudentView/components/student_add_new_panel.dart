@@ -1,8 +1,8 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/ui/logic/bloc/student/student_bloc.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class StudentAddNew extends StatefulWidget {
   @override
@@ -34,11 +34,7 @@ class _StudentAddNewState extends State<StudentAddNew> {
   }
 
   _handleAddNewStudent() {
-    if (studentIdInputController.text != '' &&
-        studentNameInputController.text != '' &&
-        passwordInputController.text != '' &&
-        batchInputController.text != '' &&
-        _selectedMajor != '') {
+    if (studentIdInputController.text != '' && studentNameInputController.text != '' && passwordInputController.text != '' && batchInputController.text != '' && _selectedMajor != '') {
       BlocProvider.of<StudentBloc>(context).add(
         AddNewStudentWithForm(
           studentId: studentIdInputController.text,
@@ -49,16 +45,7 @@ class _StudentAddNewState extends State<StudentAddNew> {
         ),
       );
     } else {
-      Fluttertoast.showToast(
-        webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-        msg: 'All fields must not blank',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: redColor,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      ToastNotification().showToast(message: 'All fields must not blank');
     }
   }
 
@@ -67,28 +54,12 @@ class _StudentAddNewState extends State<StudentAddNew> {
     return BlocBuilder<StudentBloc, StudentState>(
       builder: (context, state) {
         if (state is StudentAddNewFailed) {
-          Fluttertoast.showToast(
-            webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-            msg: state.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: redColor,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          ).then((value) => BlocProvider.of<StudentBloc>(context).add(GetStudentAddNewPageData()));
+          ToastNotification().showToast(message: state.message, color: redColor);
+          BlocProvider.of<StudentBloc>(context).add(GetStudentAddNewPageData());
         }
         if (state is StudentAddNewSuccess) {
-          Fluttertoast.showToast(
-            webBgColor: "linear-gradient(to right, #2e7d32, #388e3c)",
-            msg: state.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: greenColor,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          ).then((value) => BlocProvider.of<StudentBloc>(context).add(GetStudentAddNewPageData()));
+          ToastNotification().showToast(message: state.message, color: greenColor);
+          BlocProvider.of<StudentBloc>(context).add(GetStudentAddNewPageData());
         }
         return Column(
           children: <Widget>[
@@ -196,13 +167,7 @@ class _StudentAddNewState extends State<StudentAddNew> {
                                     );
                                   }
 
-                                  return Center(
-                                    child: Container(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  );
+                                  return Container();
                                 },
                               ),
                             ),

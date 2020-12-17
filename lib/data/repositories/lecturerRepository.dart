@@ -6,16 +6,8 @@ class LecturerRepository {
   final AttendanceApi attendanceApi;
   LecturerRepository({this.attendanceApi});
 
-  Future<BasicResponse> registerNewLecturer(
-    String lecturerEmail,
-    String lecturerName,
-    String password,
-  ) async {
-    BasicResponse basicResponse = await attendanceApi.addNewLecturer(
-      lecturerEmail: lecturerEmail,
-      lecturerName: lecturerName,
-      password: password,
-    );
+  Future<BasicResponse> registerNewLecturer(String lecturerEmail, String lecturerName, String password) async {
+    BasicResponse basicResponse = await attendanceApi.addNewLecturer(lecturerEmail: lecturerEmail, lecturerName: lecturerName, password: password);
     return basicResponse;
   }
 

@@ -15,7 +15,7 @@ class DashboardLoading extends DashboardState {}
 
 class DashboardLoadData extends DashboardState {
   final List<Room> listRoomTime;
-  final RoomDetailResponse detailRoom;
+  final RoomDetail detailRoom;
   final List<String> listTime;
 
   DashboardLoadData({this.listRoomTime, this.detailRoom, this.listTime});

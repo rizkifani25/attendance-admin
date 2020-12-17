@@ -1,8 +1,10 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
-import 'package:attendance_admin/models/room_detail_response.dart';
+import 'package:attendance_admin/models/room_detail.dart';
 import 'package:attendance_admin/ui/components/components.dart';
 import 'package:attendance_admin/ui/logic/bloc/dashboard/dashboard_bloc.dart';
+import 'package:attendance_admin/ui/view/RoomView/components/room_detail.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -55,97 +57,46 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
   }
 
   _handleCalendarButton(BuildContext context) {
-    showModalBottomSheet<void>(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      enableDrag: true,
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height / 1.3,
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Container(
-            child: Stack(
-              children: [
-                Calendar(
-                  onSelectedDate: (date) => _handleDateChange(date),
-                ),
-              ],
-            ),
-          ),
+        return CustomDialogBox(
+          children: [
+            Center(
+                child: Calendar(
+              onSelectedDate: (date) => _handleDateChange(date),
+            )),
+          ],
         );
       },
-    ).whenComplete(() => _handleSendDateAndRoomName());
+    ).then((value) => _handleSendDateAndRoomName());
   }
 
   _handleEnrolledDetailButton(BuildContext context, String time, String subject, List<Enrolled> enrolled, Lecturer lecturer, RoomStatus status) {
-    showModalBottomSheet<void>(
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      enableDrag: true,
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height / 1.2,
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        return CustomDialogBox(
+          children: [
+            Center(
+              child: RoomRegister(time: time, subject: subject, enrolled: enrolled, lecturer: lecturer, status: status, roomName: _listRooms[_selectedRoom - 1].room, date: _dateNow),
             ),
-          ),
-          child: Container(
-            child: RoomRegister(
-              time: time,
-              subject: subject,
-              enrolled: enrolled,
-              lecturer: lecturer,
-              status: status,
-              roomName: _listRooms[_selectedRoom - 1].room,
-              date: _dateNow,
-            ),
-          ),
+          ],
         );
       },
-    ).whenComplete(() => _handleSendDateAndRoomName());
+    ).then((value) => _handleSendDateAndRoomName());
   }
 
-  _handleDetailsButton(BuildContext context, String time, RoomDetailResponse data) {
-    showModalBottomSheet<void>(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      enableDrag: true,
+  _handleDetailsButton(BuildContext context, String time, RoomDetail data) {
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height / 1.2,
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        return CustomDialogBox(
+          children: [
+            Center(
+              child: RoomDetails(time: time, roomDetail: data),
             ),
-          ),
-          child: Text('testing'),
+          ],
         );
       },
     );
@@ -156,32 +107,30 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     return Scaffold(
       body: Container(
         margin: EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: Stack(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 350,
-                  child: Card(
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            'Select Room : ',
-                            style: TextStyle(
-                              color: greyColor,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                        BlocBuilder<DashboardBloc, DashboardState>(
-                          builder: (context, state) {
-                            if (state is DashboardLoadData) {
-                              _listRooms = state.listRoomTime;
-                              return DropdownButton(
+            BlocBuilder<DashboardBloc, DashboardState>(
+              builder: (context, state) {
+                if (state is DashboardLoadData) {
+                  _listRooms = state.listRoomTime;
+                  return Row(
+                    children: [
+                      Container(
+                        width: 350,
+                        child: Card(
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  'Select Room : ',
+                                  style: TextStyle(
+                                    color: greyColor,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                              DropdownButton(
                                 hint: Text('Select Room'),
                                 value: _selectedRoom,
                                 items: state.listRoomTime.map((e) {
@@ -196,70 +145,74 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                   });
                                   _handleSendDateAndRoomName();
                                 },
-                              );
-                            }
-                            return Center(
-                              child: Container(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 350,
+                        child: Card(
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  'Select Date : ',
+                                  style: TextStyle(
+                                    color: greyColor,
+                                    fontSize: 24,
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 350,
-                  child: Card(
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            'Select Date : ',
-                            style: TextStyle(
-                              color: greyColor,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                        FlatButton(
-                          child: Padding(
-                            padding: EdgeInsets.all(7),
-                            child: Text(
-                              _dateNow,
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 24,
+                              FlatButton(
+                                child: Padding(
+                                  padding: EdgeInsets.all(7),
+                                  child: Text(
+                                    _dateNow,
+                                    style: TextStyle(
+                                      color: primaryColor,
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                ),
+                                focusColor: hoverColor,
+                                color: transparentColor,
+                                onPressed: () => _handleCalendarButton(context),
                               ),
-                            ),
+                            ],
                           ),
-                          focusColor: hoverColor,
-                          color: transparentColor,
-                          onPressed: () => _handleCalendarButton(context),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            BlocBuilder<DashboardBloc, DashboardState>(
-              builder: (context, state) {
-                if (state is DashboardLoadData) {
-                  return Container(
-                    child: _tableRoomDetail(state.detailRoom, state.listTime),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 20),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.refresh_rounded,
+                            size: 25,
+                            color: primaryColor,
+                          ),
+                          onPressed: () => _handleSendDateAndRoomName(),
+                        ),
+                      )
+                    ],
                   );
                 }
-                return Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
-                );
+                return Container();
               },
+            ),
+            Container(
+              alignment: Alignment.center,
+              child: BlocBuilder<DashboardBloc, DashboardState>(
+                builder: (context, state) {
+                  if (state is DashboardLoadData) {
+                    return Container(
+                      child: _tableRoomDetail(state.detailRoom, state.listTime),
+                    );
+                  }
+                  return WidgetLoadingIndicator(color: primaryColor);
+                },
+              ),
             ),
           ],
         ),
@@ -267,7 +220,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
     );
   }
 
-  Widget _tableRoomDetail(RoomDetailResponse data, List<String> time) {
+  Widget _tableRoomDetail(RoomDetail data, List<String> time) {
     final List fixedList = Iterable<int>.generate(time.length).toList();
     final tableHeadStyle = TextStyle(
       color: greyColor2,
@@ -332,7 +285,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      listTime[e].subject != '-' ? listTime[e].subject : 'SUBJECT KOSONG',
+                                      listTime[e].subject != '' ? listTime[e].subject : 'SUBJECT KOSONG',
                                     ),
                                     sizedBox,
                                   ],
@@ -354,7 +307,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                           _handleEnrolledDetailButton(
                                             context,
                                             time[e],
-                                            listTime[e].subject != '-' ? listTime[e].subject : '-',
+                                            listTime[e].subject != '' ? listTime[e].subject : '',
                                             listTime[e].enrolled.isEmpty ? [] : listTime[e].enrolled,
                                             listTime[e].lecturer,
                                             listTime[e].status,
@@ -379,7 +332,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      listTime[e].lecturer.lecturerName != '-' ? listTime[e].lecturer.lecturerName : 'LECTURER KOSONG',
+                                      listTime[e].lecturer.lecturerName != '' ? listTime[e].lecturer.lecturerName : 'LECTURER KOSONG',
                                     ),
                                     sizedBox,
                                   ],

@@ -62,8 +62,12 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     yield StudentListingLoading();
 
     try {
-      final _listStudent = await studentRepository.getListStudent(studentId: event.studentId);
-      yield StudentListingSuccess(listStudent: _listStudent);
+      final basicResponse = await studentRepository.getListStudent(studentId: event.studentId);
+
+      var tagObjsJson = basicResponse.data as List;
+      List<Student> listStudent = tagObjsJson.map((e) => Student.fromJson(e)).toList();
+
+      yield StudentListingSuccess(listStudent: listStudent);
     } catch (e) {
       print(e);
       yield StudentListingFailed(message: 'An unknown error occurred when listing student');
@@ -96,13 +100,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
     yield StudentAddNewPageLoading();
 
     try {
-      final basicResponse = await studentRepository.registerNewStudent(
-        event.studentId,
-        event.studentName,
-        event.password,
-        event.batch,
-        event.major,
-      );
+      final basicResponse = await studentRepository.registerNewStudent(event.studentId, event.studentName, event.password, event.batch, event.major);
       if (basicResponse.responseCode != 200) {
         yield StudentAddNewPageLoadData(listMajor: _listOfMajor);
         yield StudentAddNewFailed(message: basicResponse.responseMessage);

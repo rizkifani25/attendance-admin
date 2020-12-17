@@ -1,10 +1,10 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
 import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:attendance_admin/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'student_view_components.dart';
 
@@ -29,30 +29,46 @@ class _ListStudentViewState extends State<ListStudentView> {
 
   _handleShowPanelAddNewStudentButton(BuildContext context) {
     BlocProvider.of<StudentBloc>(context).add(GetStudentAddNewPageData());
-    showModalBottomSheet<dynamic>(
-      backgroundColor: transparentColor,
-      isScrollControlled: true,
-      enableDrag: true,
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: StudentAddNew(),
+        return CustomDialogBox(
+          children: [
+            StudentAddNew(),
+          ],
         );
       },
-    ).whenComplete(() => BlocProvider.of<StudentBloc>(context).add(GetStudentList()));
+    ).then((value) => BlocProvider.of<StudentBloc>(context).add(GetStudentList()));
   }
 
   _handleDeleteButton(String studentId) {
-    BlocProvider.of<StudentBloc>(context).add(DeleteStudent(studentId: studentId));
-    BlocProvider.of<StudentBloc>(context).add(GetStudentList());
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialogBox(
+          children: [
+            Text(
+              'Delete student ' + studentId + '?',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: FlatButton(
+                onPressed: () {
+                  BlocProvider.of<StudentBloc>(context).add(DeleteStudent(studentId: studentId));
+                  BlocProvider.of<StudentBloc>(context).add(GetStudentList());
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Yes',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -89,22 +105,9 @@ class _ListStudentViewState extends State<ListStudentView> {
                     return _tableListStudent(state.listStudent);
                   }
                   if (state is StudentListingFailed) {
-                    Fluttertoast.showToast(
-                      webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                      msg: state.message,
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: redColor,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
+                    ToastNotification().showToast(message: state.message, color: redColor);
                   }
-                  return Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  );
+                  return WidgetLoadingIndicator(color: primaryColor);
                 }),
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add New Student',
@@ -122,28 +125,10 @@ class _ListStudentViewState extends State<ListStudentView> {
             child: BlocBuilder<StudentBloc, StudentState>(
               builder: (context, state) {
                 if (state is DeleteStudentSuccess) {
-                  Fluttertoast.showToast(
-                    webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                    msg: state.message,
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: greenColor,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
+                  return ToastNotification().showToast(message: state.message);
                 }
                 if (state is DeleteStudentFailed) {
-                  Fluttertoast.showToast(
-                    webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-                    msg: state.message,
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: redColor,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
+                  return ToastNotification().showToast(message: state.message, color: redColor);
                 }
                 return Text('');
               },
@@ -158,14 +143,7 @@ class _ListStudentViewState extends State<ListStudentView> {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: DataTable(
-        columns: <DataColumn>[
-          DataColumn(label: Text('Student ID')),
-          DataColumn(label: Text('Name')),
-          DataColumn(label: Text('Batch')),
-          DataColumn(label: Text('Major')),
-          DataColumn(label: Text('History Room')),
-          DataColumn(label: Text('Actions'))
-        ],
+        columns: <DataColumn>[DataColumn(label: Text('Student ID')), DataColumn(label: Text('Name')), DataColumn(label: Text('Batch')), DataColumn(label: Text('Major')), DataColumn(label: Text('History Room')), DataColumn(label: Text('Actions'))],
         rows: listStudent
             .map(
               (e) => DataRow(
@@ -183,7 +161,7 @@ class _ListStudentViewState extends State<ListStudentView> {
                           color: redColor,
                         ),
                         onPressed: () {
-                          _handleDeleteButton(e.studentId);
+                          return _handleDeleteButton(e.studentId);
                         },
                       ),
                     ],

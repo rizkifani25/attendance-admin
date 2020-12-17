@@ -31,14 +31,13 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     try {
       final listOfRoom = await attendanceRepository.getListOfRoom();
       final listOfTime = await attendanceRepository.getListOfTime();
-      final roomDetail = await attendanceRepository.getRoomDetail(event.roomName, event.date);
+      final basicResponse = await attendanceRepository.getRoomDetail(event.roomName, event.date);
 
-      if (listOfRoom != null && roomDetail != null && listOfTime != null) {
-        roomDetail.toString();
+      if (listOfRoom != null && basicResponse.responseCode == 200 && listOfTime != null) {
         yield DashboardLoadData(
           listRoomTime: listOfRoom,
           listTime: listOfTime,
-          detailRoom: roomDetail,
+          detailRoom: RoomDetail.fromJson(basicResponse.data),
         );
       } else {
         yield DashboardLoadDataFailure(message: 'Something very weird just happened');

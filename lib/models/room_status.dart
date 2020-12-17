@@ -16,15 +16,15 @@ class RoomStatus {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data['status'] = this.status ?? false;
-    data['status_message'] = this.statusMessage ?? '-';
+    data['status'] = this.status;
+    data['status_message'] = this.statusMessage;
     return data;
   }
 
   factory RoomStatus.fromJson(Map<String, dynamic> json) {
     return RoomStatus(
-      status: json['status'] ?? false,
-      statusMessage: json['status_message'] ?? '-',
+      status: json['status'],
+      statusMessage: json['status_message'],
     );
   }
 }

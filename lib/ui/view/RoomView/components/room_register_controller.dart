@@ -1,6 +1,7 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
 import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
@@ -14,15 +15,7 @@ class RoomRegister extends StatefulWidget {
   final String roomName;
   final String date;
 
-  RoomRegister({
-    this.time,
-    this.subject,
-    this.enrolled,
-    this.lecturer,
-    this.status,
-    this.roomName,
-    this.date,
-  });
+  RoomRegister({this.time, this.subject, this.enrolled, this.lecturer, this.status, this.roomName, this.date});
 
   @override
   _RoomRegisterState createState() => _RoomRegisterState();
@@ -85,8 +78,8 @@ class _RoomRegisterState extends State<RoomRegister> {
 
   _handleUpdateButton() {
     Time updateTime = new Time(
-      subject: _subjectInputController.text.isNotEmpty ? _subjectInputController.text : '-',
-      lecturer: _typeAheadLecturerController.text.isNotEmpty ? _lecturer : new Lecturer(lecturerName: '-', lecturerEmail: '-', password: '-', historyRoom: []),
+      subject: _subjectInputController.text.isNotEmpty ? _subjectInputController.text : '',
+      lecturer: _typeAheadLecturerController.text.isNotEmpty ? _lecturer : new Lecturer(lecturerName: '', lecturerEmail: '', password: '', historyRoom: []),
       enrolled: listChips,
       status: _selectedStatus == 'Available' ? new RoomStatus(status: false, statusMessage: 'Available') : new RoomStatus(status: true, statusMessage: _selectedStatus),
     );
@@ -112,23 +105,23 @@ class _RoomRegisterState extends State<RoomRegister> {
         Enrolled(
           student: student,
           statusAttendance: new StatusAttendance(
-            byDistance: '-',
-            byPhoto: '-',
-            byTime: '-',
+            byDistance: '',
+            byPhoto: '',
+            byTime: '',
           ),
           attendStudent: new AttendStudent(
-            image: '-',
-            time: '-',
+            image: '',
+            time: DateTime.now(),
             positionStudent: new PositionStudent(latitude: 0.0, longitude: 0.0),
             distance: 0.0,
           ),
           outStudent: new OutStudent(
-            image: '-',
-            time: '-',
+            image: '',
+            time: DateTime.now(),
             positionStudent: new PositionStudent(latitude: 0.0, longitude: 0.0),
             distance: 0.0,
           ),
-          permission: new Permission(statusPermission: '-', reason: '-'),
+          permission: new Permission(statusPermission: '', reason: ''),
         ),
       );
     });
@@ -142,227 +135,211 @@ class _RoomRegisterState extends State<RoomRegister> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          width: 500,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: Text(
-                    _roomName + ' // ' + _date + ' // ' + _time,
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: Text(
+              _roomName + ' || ' + _date + ' || ' + _time,
+              style: TextStyle(
+                fontSize: 24,
+                color: primaryColor,
               ),
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: DropdownButton(
-                  hint: Text('Select Room'),
-                  value: _selectedStatus,
-                  items: RoomStatus().getRoomStatusList().map((e) {
-                    return DropdownMenuItem(
-                      child: Text(e.statusMessage),
-                      value: e.statusMessage,
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedStatus = value;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: TextField(
-                  controller: _subjectInputController,
-                  decoration: InputDecoration(
-                    labelText: 'Subject',
-                    border: OutlineInputBorder(),
-                    hintText: 'Input subject',
-                    isDense: true,
-                  ),
-                  keyboardType: TextInputType.text,
-                  onSubmitted: (value) {
-                    setState(() {
-                      _subject = value;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: BlocBuilder<LecturerBloc, LecturerState>(builder: (context, state) {
-                  if (state is LecturerListingSuccess) {
-                    _listLecturer = state.listLecturer;
-                    return ListTile(
-                      title: TypeAheadField(
-                        textFieldConfiguration: TextFieldConfiguration(
-                          decoration: InputDecoration(
-                            labelText: 'Lecturer Name',
-                            border: OutlineInputBorder(),
-                          ),
-                          controller: _typeAheadLecturerController,
-                        ),
-                        suggestionsCallback: (pattern) {
-                          return _getSuggestionForLecturer(pattern);
-                        },
-                        transitionBuilder: (context, suggestionsBox, controller) {
-                          return suggestionsBox;
-                        },
-                        itemBuilder: (context, Lecturer suggestion) {
-                          return Container(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text(
-                                      suggestion.lecturerName,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(50.0, 10, 10, 10),
-                                  child: Text(
-                                    suggestion.lecturerEmail,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                        onSuggestionSelected: (Lecturer suggestion) {
-                          _handleAddLecturerToClass(suggestion);
-                          _typeAheadLecturerController.text = suggestion.lecturerName;
-                        },
-                      ),
-                    );
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  );
-                }),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: BlocBuilder<StudentBloc, StudentState>(builder: (context, state) {
-                  if (state is StudentListingSuccess) {
-                    _listStudent = state.listStudent;
-                    return ListTile(
-                      title: TypeAheadField(
-                        textFieldConfiguration: TextFieldConfiguration(
-                          decoration: InputDecoration(
-                            labelText: 'Student Id',
-                            border: OutlineInputBorder(),
-                          ),
-                          controller: _typeAheadStudentController,
-                        ),
-                        suggestionsCallback: (pattern) {
-                          return _getSuggestionForStudent(pattern);
-                        },
-                        transitionBuilder: (context, suggestionsBox, controller) {
-                          return suggestionsBox;
-                        },
-                        itemBuilder: (context, Student suggestion) {
-                          return Container(
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text(
-                                      suggestion.studentId,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(50.0, 10, 10, 10),
-                                  child: Text(
-                                    suggestion.studentName,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                        onSuggestionSelected: (Student suggestion) {
-                          _handleAddStudentToListEnrolled(suggestion);
-                          _typeAheadStudentController.text = suggestion.studentId;
-                        },
-                      ),
-                    );
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  );
-                }),
-              ),
-              Wrap(
-                children: listChips.map((e) {
-                  return Padding(
-                    padding: EdgeInsets.all(5),
-                    child: InputChip(
-                      avatar: CircleAvatar(
-                        child: Icon(Icons.account_circle),
-                      ),
-                      label: Text(e.student.studentId),
-                      onDeleted: () => setState(
-                        () => listChips.remove(e),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: RaisedButton(
-                    color: greenColor,
-                    textColor: textColor,
-                    padding: const EdgeInsets.all(10),
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(8.0),
-                    ),
-                    child: Text('UPDATE'),
-                    onPressed: () => _handleUpdateButton(),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(30),
+          child: DropdownButton(
+            value: _selectedStatus,
+            items: RoomStatus().getRoomStatusList().map((e) {
+              return DropdownMenuItem(
+                child: Text(e.statusMessage),
+                value: e.statusMessage,
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedStatus = value;
+              });
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(30),
+          child: TextField(
+            controller: _subjectInputController,
+            decoration: InputDecoration(
+              labelText: 'Subject',
+              border: OutlineInputBorder(),
+              hintText: 'Input subject',
+              isDense: true,
+            ),
+            keyboardType: TextInputType.text,
+            onSubmitted: (value) {
+              setState(() {
+                _subject = value;
+              });
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: BlocBuilder<LecturerBloc, LecturerState>(builder: (context, state) {
+            if (state is LecturerListingSuccess) {
+              _listLecturer = state.listLecturer;
+              return ListTile(
+                title: TypeAheadField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    decoration: InputDecoration(
+                      labelText: 'Lecturer Name',
+                      border: OutlineInputBorder(),
+                    ),
+                    controller: _typeAheadLecturerController,
+                  ),
+                  suggestionsCallback: (pattern) {
+                    return _getSuggestionForLecturer(pattern);
+                  },
+                  transitionBuilder: (context, suggestionsBox, controller) {
+                    return suggestionsBox;
+                  },
+                  itemBuilder: (context, Lecturer suggestion) {
+                    return Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                suggestion.lecturerName,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(50.0, 10, 10, 10),
+                            child: Text(
+                              suggestion.lecturerEmail,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  onSuggestionSelected: (Lecturer suggestion) {
+                    _handleAddLecturerToClass(suggestion);
+                    _typeAheadLecturerController.text = suggestion.lecturerName;
+                  },
+                ),
+              );
+            }
+            return WidgetLoadingIndicator(color: primaryColor);
+          }),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: BlocBuilder<StudentBloc, StudentState>(builder: (context, state) {
+            if (state is StudentListingSuccess) {
+              _listStudent = state.listStudent;
+              return ListTile(
+                title: TypeAheadField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    decoration: InputDecoration(
+                      labelText: 'Student Id',
+                      border: OutlineInputBorder(),
+                    ),
+                    controller: _typeAheadStudentController,
+                  ),
+                  suggestionsCallback: (pattern) {
+                    return _getSuggestionForStudent(pattern);
+                  },
+                  transitionBuilder: (context, suggestionsBox, controller) {
+                    return suggestionsBox;
+                  },
+                  itemBuilder: (context, Student suggestion) {
+                    return Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                suggestion.studentId,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(50.0, 10, 10, 10),
+                            child: Text(
+                              suggestion.studentName,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  onSuggestionSelected: (Student suggestion) {
+                    _handleAddStudentToListEnrolled(suggestion);
+                    _typeAheadStudentController.text = suggestion.studentId;
+                  },
+                ),
+              );
+            }
+            return WidgetLoadingIndicator(color: primaryColor);
+          }),
+        ),
+        Wrap(
+          children: listChips.map((e) {
+            return Padding(
+              padding: EdgeInsets.all(5),
+              child: InputChip(
+                avatar: CircleAvatar(
+                  child: Icon(Icons.account_circle),
+                ),
+                label: Text(e.student.studentId),
+                onDeleted: () => setState(
+                  () => listChips.remove(e),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: RaisedButton(
+              color: greenColor,
+              textColor: textColor,
+              padding: const EdgeInsets.all(10),
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(8.0),
+              ),
+              child: Text('UPDATE'),
+              onPressed: () => _handleUpdateButton(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

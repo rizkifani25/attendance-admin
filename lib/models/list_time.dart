@@ -25,21 +25,4 @@ class ListTime {
       time4: Time.fromJson(json['time4']),
     );
   }
-
-  @override
-  String toString() {
-    return 'ListTime(time1: $time1, time2: $time2, time3: $time3, time4: $time4)';
-  }
-
-  @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
-
-    return o is ListTime && o.time1 == time1 && o.time2 == time2 && o.time3 == time3 && o.time4 == time4;
-  }
-
-  @override
-  int get hashCode {
-    return time1.hashCode ^ time2.hashCode ^ time3.hashCode ^ time4.hashCode;
-  }
 }

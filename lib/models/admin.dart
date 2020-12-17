@@ -17,17 +17,4 @@ class Admin {
       password: json['password'],
     );
   }
-
-  @override
-  String toString() => 'Admin(email: $email, password: $password)';
-
-  @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
-
-    return o is Admin && o.email == email && o.password == password;
-  }
-
-  @override
-  int get hashCode => email.hashCode ^ password.hashCode;
 }

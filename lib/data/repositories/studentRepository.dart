@@ -5,20 +5,8 @@ class StudentRepository {
   final AttendanceApi attendanceApi;
   StudentRepository({this.attendanceApi});
 
-  Future<BasicResponse> registerNewStudent(
-    String studentId,
-    String studentName,
-    String password,
-    String batch,
-    String major,
-  ) async {
-    BasicResponse basicResponse = await attendanceApi.addNewStudent(
-      studentId: studentId,
-      studentName: studentName,
-      password: password,
-      batch: batch,
-      major: major,
-    );
+  Future<BasicResponse> registerNewStudent(String studentId, String studentName, String password, String batch, String major) async {
+    BasicResponse basicResponse = await attendanceApi.addNewStudent(studentId: studentId, studentName: studentName, password: password, batch: batch, major: major);
     return basicResponse;
   }
 
@@ -27,8 +15,8 @@ class StudentRepository {
     return basicResponse;
   }
 
-  Future<List<Student>> getListStudent({String studentId}) async {
-    List<Student> listStudent = await attendanceApi.getListStudent(studentId: studentId);
-    return listStudent;
+  Future<BasicResponse> getListStudent({String studentId}) async {
+    BasicResponse basicResponse = await attendanceApi.getListStudent(studentId: studentId);
+    return basicResponse;
   }
 }

@@ -1,9 +1,9 @@
 import 'package:attendance_admin/constant/Constant.dart';
 import 'package:attendance_admin/models/models.dart';
 import 'package:attendance_admin/ui/logic/bloc/bloc.dart';
+import 'package:attendance_admin/ui/view/Widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatelessWidget {
   @override
@@ -55,27 +55,12 @@ class __SignInFormState extends State<_SignInForm> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginFailure) {
-          Fluttertoast.showToast(
-            webBgColor: "linear-gradient(to right, #c62828, #d32f2f)",
-            msg: state.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: redColor,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
+          return ToastNotification().showToast(message: state.message, color: redColor);
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
         if (state is LoginLoading) {
-          return Center(
-            child: Container(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-              ),
-            ),
-          );
+          return WidgetLoadingIndicator(color: primaryColor);
         }
 
         return Card(
@@ -118,7 +103,7 @@ class __SignInFormState extends State<_SignInForm> {
                         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                         hintText: 'Email',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       controller: _usernameController,
@@ -132,7 +117,7 @@ class __SignInFormState extends State<_SignInForm> {
                       },
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 16,
                     ),
                     TextFormField(
                       decoration: InputDecoration(
@@ -141,7 +126,7 @@ class __SignInFormState extends State<_SignInForm> {
                         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                         hintText: 'Password',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       obscureText: true,
@@ -153,15 +138,14 @@ class __SignInFormState extends State<_SignInForm> {
                         return null;
                       },
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 16,
                     ),
                     RaisedButton(
                       color: primaryColor,
                       textColor: textColor,
-                      padding: const EdgeInsets.all(16),
-                      shape:
-                          new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0)),
+                      padding: const EdgeInsets.all(20),
+                      shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20)),
                       child: Text('LOG IN'),
                       onPressed: () => _handleLoginButton(),
                     )
