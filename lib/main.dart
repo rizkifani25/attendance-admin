@@ -72,8 +72,8 @@ class AdminAttendanceApp extends StatelessWidget {
           }
 
           if (state is AuthNotAuthenticated) {
-            // return LoginView();
-            return DashboardView();
+            return LoginView();
+            // return DashboardView();
           }
 
           if (state is AuthFailure) {

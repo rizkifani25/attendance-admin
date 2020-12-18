@@ -25,7 +25,7 @@ class RoomDetails extends StatelessWidget {
       timeDetail = roomDetail.listTime.time4;
     }
 
-    TextStyle textStyleTableHead = TextStyle(fontSize: 26);
+    TextStyle textStyleTableHead = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
     TextStyle textStyleTableCell = TextStyle(fontSize: 20);
     TextStyle textStyleTableCellChild = TextStyle(fontSize: 16);
 

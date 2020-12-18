@@ -15,8 +15,8 @@ class DashboardView extends StatelessWidget {
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 if (state is AuthNotAuthenticated) {
-                  // return LoginView();
-                  return _DashboardContent();
+                  return LoginView();
+                  // return _DashboardContent();
                 }
 
                 if (state is AuthAuthenticated) {

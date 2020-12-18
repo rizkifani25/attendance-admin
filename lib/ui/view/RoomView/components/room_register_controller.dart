@@ -121,7 +121,11 @@ class _RoomRegisterState extends State<RoomRegister> {
             positionStudent: new PositionStudent(latitude: 0.0, longitude: 0.0),
             distance: 0.0,
           ),
-          permission: new Permission(statusPermission: '', reason: ''),
+          permission: new Permission(
+            statusPermission: '',
+            reason: '',
+            datePermission: DateTime.now(),
+          ),
         ),
       );
     });
