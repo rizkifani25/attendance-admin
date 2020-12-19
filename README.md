@@ -5,7 +5,7 @@
 
 ### *Requirements*
 ```text
-Flutter
+Flutter Web
 Firebase Auth
 Firebase Storage
 ```
