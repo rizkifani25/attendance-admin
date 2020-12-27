@@ -81,7 +81,19 @@ class _RoomRegisterState extends State<RoomRegister> {
       subject: _subjectInputController.text.isNotEmpty ? _subjectInputController.text : '',
       lecturer: _typeAheadLecturerController.text.isNotEmpty ? _lecturer : new Lecturer(lecturerName: '', lecturerEmail: '', password: '', historyRoom: []),
       enrolled: listChips,
-      status: _selectedStatus == 'Available' ? new RoomStatus(status: false, statusMessage: 'Available') : new RoomStatus(status: true, statusMessage: _selectedStatus),
+      status: _selectedStatus == 'Available'
+          ? new RoomStatus(
+              status: false,
+              statusMessage: 'Available',
+              startAt: _status.startAt,
+              dismissAt: _status.dismissAt,
+            )
+          : new RoomStatus(
+              status: true,
+              statusMessage: _selectedStatus,
+              startAt: _status.startAt,
+              dismissAt: _status.dismissAt,
+            ),
     );
     BlocProvider.of<DashboardBloc>(context).add(
       UpdateRoomData(

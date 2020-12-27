@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // URI
-final String apiURL = 'https://71fe94194eff.ngrok.io/';
+final String apiURL = 'https://attendance-server-js.herokuapp.com/';
 
 // theme
 final primaryColor = Colors.indigo[700];

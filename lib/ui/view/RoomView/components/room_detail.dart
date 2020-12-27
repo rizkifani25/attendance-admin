@@ -76,10 +76,43 @@ class RoomDetails extends StatelessWidget {
               ),
               _tableRowBasic(
                 tableHead: Text('Room Status', style: textStyleTableHead),
-                tableCell: Text(
-                  timeDetail.status.statusMessage,
-                  textAlign: TextAlign.end,
-                  style: textStyleTableCell,
+                tableCell: Table(
+                  border: TableBorder.all(color: greyColor3, width: 1, style: BorderStyle.solid),
+                  children: [
+                    _tableRowBasic(
+                      tableHead: Text(
+                        'Status',
+                        style: textStyleTableCellChild,
+                      ),
+                      tableCell: Text(
+                        timeDetail.status.statusMessage,
+                        textAlign: TextAlign.end,
+                        style: textStyleTableCellChild,
+                      ),
+                    ),
+                    _tableRowBasic(
+                      tableHead: Text(
+                        'Start At',
+                        style: textStyleTableCellChild,
+                      ),
+                      tableCell: Text(
+                        timeDetail.status.startAt ?? '',
+                        textAlign: TextAlign.end,
+                        style: textStyleTableCellChild,
+                      ),
+                    ),
+                    _tableRowBasic(
+                      tableHead: Text(
+                        'Dismiss At',
+                        style: textStyleTableCellChild,
+                      ),
+                      tableCell: Text(
+                        timeDetail.status.dismissAt ?? '',
+                        textAlign: TextAlign.end,
+                        style: textStyleTableCellChild,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               _tableRowBasic(

@@ -20,3 +20,4 @@ export 'response/sign_in_response.dart';
 export 'lecturer.dart';
 export 'permission.dart';
 export 'room_status.dart';
+export 'room_history.dart';

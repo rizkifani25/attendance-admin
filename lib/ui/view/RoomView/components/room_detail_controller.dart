@@ -285,7 +285,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      listTime[e].subject != '' ? listTime[e].subject : 'SUBJECT KOSONG',
+                                      listTime[e].subject != '' ? listTime[e].subject : 'EMPTY SUBJECT',
                                     ),
                                     sizedBox,
                                   ],
@@ -314,7 +314,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                           );
                                         },
                                         child: Container(
-                                          child: listTime[e].enrolled.isNotEmpty ? _studentEnrolled(listTime[e].enrolled) : Text('ENROLLED KOSONG'),
+                                          child: listTime[e].enrolled.isNotEmpty ? _studentEnrolled(listTime[e].enrolled) : Text('NO STUDENT ENROLLED'),
                                         ),
                                       ),
                                     ),
@@ -332,7 +332,7 @@ class _RoomDetailControllerState extends State<RoomDetailController> {
                                       style: tableHeadStyle,
                                     ),
                                     Text(
-                                      listTime[e].lecturer.lecturerName != '' ? listTime[e].lecturer.lecturerName : 'LECTURER KOSONG',
+                                      listTime[e].lecturer.lecturerName != '' ? listTime[e].lecturer.lecturerName : 'TBA',
                                     ),
                                     sizedBox,
                                   ],
